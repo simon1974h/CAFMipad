@@ -1,6 +1,6 @@
 # CAFM für iPad
 
-Liegenschaften und Begehung, Aufträge mit Abzeichnen, Wartung & Prüfungen, Anlagen, Leitern & Tritte mit Prüfprotokollen, Schlüssel, Tätigkeitsnachweis, Berichte und PDF-Export. Läuft nach der Einrichtung vollständig offline. Die 33 Liegenschaften sind bereits angelegt.
+Liegenschaften und Begehung, Aufträge mit Abzeichnen, Wartung & Prüfungen, Anlagen, Leitern & Tritte mit Prüfprotokollen, Schlüssel, Termine, Berichte, Historie und PDF-Export. Läuft nach der Einrichtung vollständig offline. Die 33 Liegenschaften sind bereits angelegt.
 
 ## Auf GitHub Pages veröffentlichen
 

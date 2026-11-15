@@ -236,6 +236,28 @@ body.lad .datablock{border-top:0;padding-top:0;flex:0 1 420px;min-width:0}
 body.lad .datablock .side-btns{display:grid}
 body.lad .brand h1{font-size:24px}
 .sub-in{border:0;background:transparent;padding:0;color:var(--muted);font-size:13px;width:100%;min-width:0}
+#cdel{z-index:70}
+.cd-what{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--sunk)}
+.cd-what small{color:var(--muted);font-size:13px}
+.btn.dangerbtn{background:var(--z4);border-color:var(--z4);color:#fff}
+.btn.dangerbtn[disabled]{background:var(--sunk);border-color:var(--line);color:var(--muted);opacity:1}
+.histv{display:flex;flex-direction:column;gap:12px}
+.histv table.mt td small{display:block}
+.miraw{min-height:240px;font-family:var(--f-mono);font-size:12.5px;line-height:1.5}
+.mi-found{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.origmail{border:1px solid var(--line);border-radius:10px;background:var(--sunk)}
+.origmail summary{cursor:pointer;padding:10px 12px;font-weight:600;font-size:13px}
+.origmail pre{margin:0;padding:0 12px 12px;white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--f-mono);font-size:12px;max-height:320px;overflow:auto}
+.pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.pg{position:relative;aspect-ratio:3/4;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:#fff;max-width:100%}
+.pg img{width:100%;height:100%;object-fit:contain;display:block}
+.pg .x{position:absolute;top:6px;right:6px;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.pgn{position:absolute;top:6px;left:6px;font-family:var(--f-mono);font-size:11px;background:var(--ink);color:var(--surface);border-radius:99px;padding:1px 7px}
+.pgmv{position:absolute;bottom:6px;left:6px;right:6px;display:flex;justify-content:space-between}
+.pages .addph{aspect-ratio:3/4}
+.msg.busy{color:var(--muted)}
+.docchip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;padding:4px 9px;border:1px solid var(--line);border-radius:99px;background:var(--sunk);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.docchip svg,.phbtn svg{width:15px;height:15px;flex:none}
 /* CAFM-Rahmen */
 .topbar{background:var(--surface);border-bottom:1px solid var(--line)}
 .tb-in{max-width:1500px;margin:0 auto;display:flex;align-items:center;gap:18px;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -283,7 +305,7 @@ tr.click:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .agenda .ad{font-family:var(--f-mono);font-size:12.5px}.agenda .ad.over{color:var(--z4);font-weight:600}
 .agenda .al b{font-weight:500;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.agenda .al small{color:var(--muted);font-size:12px}
 .at,.ce{font-size:11px;font-weight:600;border-radius:5px;padding:1px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tk{background:var(--accent-soft);color:var(--accent)}.wt{background:var(--z2bg);color:var(--z2)}.ld{background:var(--z3bg);color:var(--z3)}.ks{background:var(--sunk);color:var(--ink);border:1px solid var(--line)}
+.tk{background:var(--accent-soft);color:var(--accent)}.tm{background:var(--z1bg);color:var(--z1)}.wt{background:var(--z2bg);color:var(--z2)}.ld{background:var(--z3bg);color:var(--z3)}.ks{background:var(--sunk);color:var(--ink);border:1px solid var(--line)}
 .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);border-radius:var(--r);overflow:hidden;gap:1px;background:var(--line)}
 .cw{background:var(--sunk);font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;padding:5px 6px;letter-spacing:.06em}
 .cd{background:var(--surface);min-height:78px;padding:4px;display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -349,6 +371,7 @@ fieldset.plain{border:0;padding:0;margin:0;min-width:0}
 </div>
 <main class="modwrap" id="mod" hidden></main>
 <div class="modal" id="imp" hidden></div>
+<div class="modal" id="cdel" hidden></div>
 
 <script>!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t=t||self).PDFLib={})}(this,(function(t){"use strict";
 /*! *****************************************************************************
@@ -379,7 +402,7 @@ const ROUTE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 const ALL_SECTIONS = [
   {key:"uv", group:"elektro", label:"Unterverteilungen", hint:"Je Verteiler eine Zeile: Sicherungen und FI-Schutzschalter zählen.",
    cols:[{k:"bez",l:"Bezeichnung",ph:"UV-EG-01"},{k:"ort",l:"Standort",ph:"Flur EG"},{k:"sich",l:"Sicherungen",t:"num"},
-         {k:"fi",l:"FI / RCD",t:"num"},{k:"fityp",l:"FI-Typ",t:"sel",o:["","Typ A","Typ AC","Typ F","Typ B"]},
+         {k:"fi",l:"FI / RCD",t:"num"},{k:"fiwert",l:"FI-Bemessung",ph:"40A/30mA",dl:["25A/30mA","40A/30mA","63A/30mA","80A/30mA","40A/100mA","63A/100mA","40A/300mA","63A/300mA","2× 40A/30mA","3× 40A/30mA"]},{k:"fityp",l:"FI-Typ",t:"sel",o:["","Typ A","Typ AC","Typ F","Typ B","Typ B+"]},
          {k:"zustand",l:"Zustand",t:"z"},{k:"bem",l:"Bemerkung",ph:"z. B. Beschriftung fehlt"}]},
   {key:"licht", group:"elektro", label:"Beleuchtung", hint:"Raumweise erfassen: Leuchtentyp, Leuchtmittel und Stückzahl.",
    cols:[{k:"bereich",l:"Raum / Bereich",ph:"Büro 1.04"},{k:"typ",l:"Leuchtentyp",t:"sel",o:["","LED-Panel","Langfeld T8","Langfeld T5","Downlight","Wandleuchte","Hallenstrahler","Notleuchte","Außenleuchte","Sonstige"]},
@@ -499,7 +522,7 @@ async function flush(id){
   if(again[id]){again[id]=false;flush(id)}
 }
 /* ---------- Weitere Sammlungen (CAFM-Module) ---------- */
-const COLLS = LAD_ONLY?[]:["auftraege","wartung","anlagen","schluessel","taetig"];
+const COLLS = LAD_ONLY?["historie"]:["auftraege","wartung","anlagen","schluessel","taetig","historie"];
 const C={};COLLS.forEach(n=>C[n]={map:new Map(),dirty:new Set(),timers:{},writing:{},again:{},ref:null});
 const clone=x=>JSON.parse(JSON.stringify(x));
 function cTouch(n,id){const c=C[n],r=c.map.get(id);if(r)r.updated=Date.now();c.dirty.add(id);clearTimeout(c.timers[id]);
@@ -529,6 +552,123 @@ function flushAllNow(){
 window.addEventListener("pagehide",flushAllNow);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")flushAllNow()});
 function collsPayload(){return Object.fromEntries(COLLS.map(n=>[n,Object.fromEntries(C[n].map)]))}
+
+/* ---------- Historie (läuft im Hintergrund) ---------- */
+const HIST_EDIT_MIN=15, histOpen={};
+function histWho(){try{return JSON.parse(localStorage.getItem("begehung-pruefer")||"{}").pruefer||""}catch(e){return ""}}
+function histAdd(e){if(!C.historie)return null;const id=newRecId("historie");C.historie.map.set(id,clone(Object.assign({at:Date.now(),who:histWho()},e)));cTouch("historie",id);return id}
+function histEdit(key,info,field,act){
+  if(!C.historie)return;const h=histOpen[key],now=Date.now();
+  if(h&&now-h.at<HIST_EDIT_MIN*60000&&C.historie.map.has(h.id)){const e=C.historie.map.get(h.id);
+    if(field&&!(e.fields||[]).includes(field))e.fields=(e.fields||[]).concat(field);
+    Object.assign(e,info,{until:now});h.at=now;cTouch("historie",h.id);return}
+  histOpen[key]={id:histAdd(Object.assign({act:act||"geändert",fields:field?[field]:[]},info)),at:now};
+}
+const OBJ_FL={nr:"Objekt-Nr.",name:"Name",adresse:"Adresse",nutzung:"Nutzung",baujahr:"Baujahr",datum:"Begehungsdatum",bearbeiter:"Begangen von",status:"Status",notiz:"Notizen"};
+const cut=(s,n)=>{s=String(s||"").replace(/\s+/g," ").trim();return s.length>n?s.slice(0,n-1)+"…":s};
+function rowInfo(oid,sec,row){const s=SECTIONS.find(x=>x.key===sec);if(!s||!row)return {};
+  const g=GROUPS.find(x=>x.key===s.group),c0=s.cols[0];
+  const label=cut([row[c0.k],row.art,row.typ,row.ort&&c0.k!=="ort"?row.ort:""].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(" · "),90)||"neue Zeile";
+  return {area:(g&&secsOf(s.group).length>1?g.label+" · ":"")+s.label,label,lieg:LAD_ONLY?"":oid,liegName:LAD_ONLY?(row.lieg||""):liegName(oid)}}
+function objInfo(id,o){o=o||objs.get(id)||{};return {area:LAD_ONLY?"Betrieb":"Liegenschaften",label:(o.nr?o.nr+" ":"")+(o.name||"Ohne Namen"),lieg:LAD_ONLY?"":id,liegName:LAD_ONLY?"":liegName(id)}}
+function recInfo(m,id,r){const M=MODS[m];return {area:M.label,label:cut([r.nr||r.inv,M.title(r)].filter(Boolean).join(" · "),90)||M.single,lieg:r.lieg||"",liegName:liegName(r.lieg)}}
+
+/* Erhöhte Sicherheitsabfrage beim Löschen */
+let cdel=null;
+const CD_WORD=v=>{v=v.trim().toUpperCase();return v==="LÖSCHEN"||v==="LOESCHEN"};
+function confirmDelete(o){cdel=o;const el=$("#cdel");el.hidden=false;
+  el.innerHTML=`<div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="cdT" style="max-width:520px">
+    <div class="dlg-h"><div><h2 id="cdT">${esc(o.title)} löschen?</h2><p>Bitte bestätigen. Das schützt vor versehentlichem Löschen.</p></div><button class="x" type="button" data-cd="no" aria-label="Abbrechen">×</button></div>
+    <div class="dlg-b">
+      <div class="cd-what"><b>${esc(o.label)}</b>${(o.lines||[]).filter(Boolean).map(l=>`<small>${esc(l)}</small>`).join("")}</div>
+      ${o.warn?`<div class="msg err">${esc(o.warn)}</div>`:""}
+      <div class="fld"><label for="cd-grund">Grund (wird in der Historie gespeichert)</label><input id="cd-grund" placeholder="z. B. doppelt angelegt"></div>
+      <div class="fld"><label for="cd-in">Zum Bestätigen LÖSCHEN eingeben</label><input id="cd-in" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="LÖSCHEN"></div>
+      <p class="note" style="margin:0">Eine Kopie bleibt in der Historie gespeichert und lässt sich dort wiederherstellen.</p>
+    </div>
+    <div class="dlg-f"><span></span><div class="actions"><button class="btn" type="button" data-cd="no">Abbrechen</button><button class="btn dangerbtn" type="button" data-cd="yes" id="cd-yes" disabled>Endgültig löschen</button></div></div></div>`;
+  setTimeout(()=>{const i=$("#cd-grund");if(i)i.focus()},30);
+}
+function closeCdel(){$("#cdel").hidden=true;$("#cdel").innerHTML="";cdel=null}
+function cdelGo(){if(!cdel||!CD_WORD($("#cd-in").value))return;const grund=$("#cd-grund").value.trim(),fn=cdel.onConfirm;closeCdel();fn(grund)}
+$("#cdel").addEventListener("input",e=>{if(e.target.id==="cd-in")$("#cd-yes").disabled=!CD_WORD(e.target.value)});
+$("#cdel").addEventListener("click",e=>{if(e.target.id==="cdel")return closeCdel();const b=e.target.closest("[data-cd]");if(!b)return;if(b.dataset.cd==="no")return closeCdel();cdelGo()});
+document.addEventListener("keydown",e=>{if(!cdel)return;if(e.key==="Escape"){e.stopImmediatePropagation();e.preventDefault();closeCdel()}else if(e.key==="Enter"&&e.target.id==="cd-in"){e.preventDefault();cdelGo()}},true);
+
+/* Wiederherstellen aus der Historie */
+function histRestore(hid){
+  const h=C.historie.map.get(hid);if(!h||!h.snap||h.restored)return;const s=h.snap;
+  if(s.type==="rec"){if(!C[s.m])return;let id=s.id;if(C[s.m].map.has(id))id=newRecId(s.m);C[s.m].map.set(id,clone(s.data));cTouch(s.m,id)}
+  else if(s.type==="row"){const o=objs.get(s.obj);if(!o){setSave("err","Die zugehörige Liegenschaft fehlt. Stelle zuerst die Liegenschaft wieder her.");return}
+    const rows=o.rows[s.sec]||(o.rows[s.sec]=[]);const d=clone(s.data);if(rows.some(x=>x.id===d.id))d.id=rid();rows.splice(Math.min(s.index,rows.length),0,d);schedule(s.obj)}
+  else if(s.type==="obj"){let id=s.id;if(objs.has(id))id=newId();objs.set(id,norm(clone(s.data)));schedule(id)}
+  else if(s.type==="doc"){const o=objs.get(s.obj),t=o&&(s.sec==="_obj"?o:(o.rows[s.sec]||[]).find(r=>r.id===s.rid));if(!t){setSave("err","Der zugehörige Eintrag fehlt. Stelle ihn zuerst wieder her.");return}
+    t.docs=(t.docs||[]).filter(z=>z.id!==s.data.id).concat(clone(s.data));schedule(s.obj)}
+  else return;
+  h.restored=Date.now();cTouch("historie",hid);
+  histAdd({act:"wiederhergestellt",area:h.area,label:h.label,lieg:h.lieg,liegName:h.liegName,note:"aus der Historie"});
+  renderList();renderSheet();renderHist();if(typeof onCollChange==="function")onCollChange("*");setSave("ok","Wiederhergestellt: "+h.label);
+}
+
+/* Historie anzeigen */
+const HS={q:"",act:"",area:"",lieg:"",limit:150};let histDlg=false;
+const HACT={angelegt:"st-ok",geändert:"st-offen",gelöscht:"st-crit",wiederhergestellt:"st-arbeit"};
+function histList(){
+  const q=HS.q.trim().toLowerCase();
+  return [...C.historie.map.entries()].map(([id,h])=>Object.assign({_id:id},h)).filter(h=>{
+    if(HS.act==="andere"?HACT[h.act]:HS.act&&h.act!==HS.act)return false;
+    if(HS.area&&h.area!==HS.area)return false;if(HS.lieg&&h.lieg!==HS.lieg)return false;
+    if(q&&![h.label,h.area,h.liegName,h.grund,h.note,h.who,(h.fields||[]).join(" ")].join(" ").toLowerCase().includes(q))return false;return true})
+    .sort((a,b)=>(b.until||b.at)-(a.until||a.at));
+}
+function histTime(h){const a=new Date(h.at),f=d=>d.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"});
+  if(h.until&&h.until-h.at>60000){const u=new Date(h.until);return f(a)+"–"+(u.toDateString()===a.toDateString()?u.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}):f(u))}return f(a)}
+function histHTML(){
+  if(!C.historie)return "";
+  const all=histList(),rows=all.slice(0,HS.limit),areas=[...new Set([...C.historie.map.values()].map(h=>h.area).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"de"));
+  const sel=(k,opts,lab)=>`<select data-hs="${k}" aria-label="${lab}">${opts.map(([v,l])=>`<option value="${esc(v)}"${HS[k]===v?" selected":""}>${esc(l)}</option>`).join("")}</select>`;
+  return `<div class="histv">
+    <div class="mfilter">
+      <input type="search" data-hs="q" id="hs-q" placeholder="Suchen …" value="${esc(HS.q)}" aria-label="Historie durchsuchen">
+      ${sel("act",[["","Alle Vorgänge"],["angelegt","Angelegt"],["geändert","Geändert"],["gelöscht","Gelöscht"],["wiederhergestellt","Wiederhergestellt"],["andere","Prüfungen, Abzeichnungen, Sonstiges"]],"Vorgang")}
+      ${sel("area",[["","Alle Bereiche"],...areas.map(a=>[a,a])],"Bereich")}
+      ${!LAD_ONLY&&typeof liegSelect==="function"?liegSelect("hs-lieg",HS.lieg).replace('<select id="hs-lieg"','<select id="hs-lieg" data-hs="lieg"'):""}
+    </div>
+    ${rows.length?`<div class="tw"><table class="mt"><thead><tr><th>Zeitpunkt</th><th>Vorgang</th><th>Bereich</th><th>Eintrag</th><th>Von</th><th></th></tr></thead><tbody>
+      ${rows.map(h=>`<tr><td class="mono" style="white-space:nowrap">${histTime(h)}</td><td><span class="stp ${HACT[h.act]||"st-wartet"}">${esc(h.act)}</span></td><td>${esc(h.area||"")}</td>
+        <td><b>${esc(h.label||"")}</b>${h.liegName?`<small>${esc(h.liegName)}</small>`:""}${(h.fields||[]).length?`<small>Geändert: ${esc(h.fields.join(", "))}</small>`:""}${h.grund?`<small>Grund: ${esc(h.grund)}</small>`:""}${h.note?`<small>${esc(h.note)}</small>`:""}</td>
+        <td>${esc(h.who||"–")}</td>
+        <td>${h.act==="gelöscht"&&h.snap?(h.restored?`<small>wiederhergestellt ${new Date(h.restored).toLocaleDateString("de-DE")}</small>`:`<button class="btn sm" type="button" data-hist="restore" data-id="${h._id}">Wiederherstellen</button>`):""}</td></tr>`).join("")}
+      </tbody></table></div>${all.length>rows.length?`<div><button class="btn ghost" type="button" data-hist="more">Ältere anzeigen (${all.length-rows.length} weitere)</button></div>`:""}`
+      :`<div class="empty">${C.historie.map.size?"Keine Vorgänge für diese Auswahl.":"Noch keine Vorgänge aufgezeichnet. Ab jetzt wird jede Änderung hier festgehalten."}</div>`}
+  </div>`;
+}
+function histPageHTML(){return `<section class="modcard"><div class="mhead"><div><h1>Historie</h1><p class="note">Alle Vorgänge werden automatisch aufgezeichnet. Mehrere Änderungen am selben Eintrag innerhalb von ${HIST_EDIT_MIN} Minuten erscheinen als ein Vorgang.</p></div>
+  <div class="actions"><button class="btn" type="button" data-hist="pdf">PDF</button><button class="btn" type="button" data-hist="csv">CSV-Export</button></div></div>${histHTML()}</section>`}
+function openHistDlg(){histDlg=true;$("#imp").hidden=false;renderHist()}
+function renderHist(){
+  if(histDlg){$("#imp").innerHTML=`<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="hsT" style="max-width:1000px"><div class="dlg-h"><div><h2 id="hsT">Historie</h2><p>Alle Vorgänge werden automatisch aufgezeichnet. Gelöschte Einträge lassen sich hier wiederherstellen.</p></div>
+    <button class="x" type="button" data-hist="close" aria-label="Schließen">×</button></div><div class="dlg-b">${histHTML()}</div>
+    <div class="dlg-f"><span></span><div class="actions"><button class="btn" type="button" data-hist="pdf">PDF</button><button class="btn" type="button" data-hist="csv">CSV-Export</button><button class="btn pri" type="button" data-hist="close">Schließen</button></div></div></div>`;return}
+  if(typeof view!=="undefined"&&view==="historie"&&typeof renderMod==="function")renderMod();
+}
+function histRerender(t){const id=t.id,pos=t.selectionStart;renderHist();if(id){const n=document.getElementById(id);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}}}
+document.addEventListener("input",e=>{const t=e.target;if(!t.dataset||!t.dataset.hs)return;HS[t.dataset.hs]=t.value;HS.limit=150;clearTimeout(t._t);t._t=setTimeout(()=>histRerender(t),t.tagName==="SELECT"?0:250)});
+document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.hs&&t.tagName==="SELECT"){HS[t.dataset.hs]=t.value;histRerender(t)}});
+document.addEventListener("click",async e=>{const b=e.target.closest("[data-hist]");if(!b)return;const a=b.dataset.hist;
+  if(a==="close")return closeImport();
+  if(a==="restore")return histRestore(b.dataset.id);
+  if(a==="more"){HS.limit+=300;return renderHist()}
+  const list=histList();
+  if(a==="csv"){const q=v=>{v=String(v??"");return /[;"\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};
+    const L=[["Zeitpunkt","Bis","Vorgang","Bereich","Eintrag","Liegenschaft","Geänderte Felder","Grund","Hinweis","Von"].join(";")];
+    list.forEach(h=>L.push([new Date(h.at).toLocaleString("de-DE"),h.until?new Date(h.until).toLocaleString("de-DE"):"",h.act,h.area,h.label,h.liegName,(h.fields||[]).join(", "),h.grund,h.note,h.who].map(q).join(";")));
+    try{await saveFile(`Historie ${today()}.csv`,"﻿"+L.join("\r\n"),"text/csv")}catch(err){}return}
+  if(a==="pdf"){const m={title:"Historie",sub:`${APP_LABEL} · ${list.length} Vorgänge${HS.act||HS.area||HS.lieg||HS.q?" (gefiltert)":""}`,right:[`Stand ${new Date().toLocaleDateString("de-DE")}`],
+      blocks:[{table:{head:["Zeitpunkt","Vorgang","Bereich","Eintrag","Von"],w:[.17,.13,.17,.41,.12],sz:7.8,rows:list.map(h=>({cells:[histTime(h),{t:h.act,c:h.act==="gelöscht"?"over":""},h.area||"",
+        [h.label,h.liegName,(h.fields||[]).length?"Geändert: "+h.fields.join(", "):"",h.grund?"Grund: "+h.grund:"",h.note].filter(Boolean).join("\n"),h.who||""]}))}}]};
+    return outDoc([m],`Historie ${today()}`,"pdf")}
+});
 
 /* ---------- Lokale Speicherung (Browser + eigene Datendatei) ---------- */
 const OFFLINE = !!window.BEGEHUNG_OFFLINE, PWA = !!window.BEGEHUNG_PWA, PRINT_OK = OFFLINE&&!PWA;
@@ -570,10 +710,12 @@ async function writeFile(){
   fileWriting=false;renderFileBox();
   if(fileAgain){fileAgain=false;writeFile()}
 }
-async function fotoDir(){return dirHandle.getDirectoryHandle("Fotos",{create:true})}
-async function writeFotoToDir(id,blob){if(!dirReady())return;try{const fd=await fotoDir();const fh=await fd.getFileHandle(id+".jpg",{create:true});const w=await fh.createWritable();await w.write(blob);await w.close()}catch(e){}}
-async function readFotoFromDir(id){if(!dirReady())return null;try{const fd=await fotoDir();const fh=await fd.getFileHandle(id+".jpg");return await fh.getFile()}catch(e){return null}}
-async function removeFotoFromDir(id){if(!dirReady())return;try{const fd=await fotoDir();await fd.removeEntry(id+".jpg")}catch(e){}}
+async function fotoDir(name){return dirHandle.getDirectoryHandle(name||"Fotos",{create:true})}
+const MEDIA_LOC=[["Fotos",".jpg"],["Unterlagen",".pdf"]];
+const mediaLoc=(id,blob)=>(blob&&blob.type==="application/pdf")||String(id).startsWith("d")?MEDIA_LOC[1]:MEDIA_LOC[0];
+async function writeFotoToDir(id,blob){if(!dirReady())return;try{const [dn,ext]=mediaLoc(id,blob),fd=await fotoDir(dn);const fh=await fd.getFileHandle(id+ext,{create:true});const w=await fh.createWritable();await w.write(blob);await w.close()}catch(e){}}
+async function readFotoFromDir(id){if(!dirReady())return null;for(const [dn,ext] of MEDIA_LOC){try{const fd=await fotoDir(dn);const fh=await fd.getFileHandle(id+ext);return await fh.getFile()}catch(e){}}return null}
+async function removeFotoFromDir(id){if(!dirReady())return;for(const [dn,ext] of MEDIA_LOC){try{const fd=await fotoDir(dn);await fd.removeEntry(id+ext)}catch(e){}}}
 async function useDir(h,preferFile){
   dirHandle=h;await kvSet("dir",h);filePerm="granted";
   try{
@@ -584,7 +726,7 @@ async function useDir(h,preferFile){
     else await writeFile();
     // Fotos, die nur im Programm liegen, in den Ordner übernehmen
     const fd=await fotoDir();
-    for(const id of await idbKeys("img")){try{await fd.getFileHandle(id+".jpg")}catch(e){const b=await idbGet("img",id);if(b)await writeFotoToDir(id,b)}}
+    for(const id of await idbKeys("img")){if(!(await readFotoFromDir(id))){const b=await idbGet("img",id);if(b)await writeFotoToDir(id,b)}}
     fileErr="";
   }catch(e){fileErr="In diesem Ordner liegt eine fremde oder beschädigte Datei „"+DATA_NAME+"“.";dirHandle=null;filePerm="none"}
   renderFileBox();renderSheet();
@@ -663,13 +805,14 @@ async function saveFile(filename,data,type){
     if(h){const w=await h.createWritable();await w.write(new Blob([data],{type}));await w.close();return}
   }
   if(PWA&&navigator.canShare){try{const f=new File([data],filename,{type});if(navigator.canShare({files:[f]})){await navigator.share({files:[f],title:filename});return}}catch(e){if(e&&e.name==="AbortError")throw {code:"declined"}}}
-  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type}));a.download=filename;
+  const ascii=filename.replace(/[äöüÄÖÜß]/g,c=>({"ä":"ae","ö":"oe","ü":"ue","Ä":"Ae","Ö":"Oe","Ü":"Ue","ß":"ss"}[c]));
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type}));a.download=ascii;
   document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
 }
 
 /* Datensicherung */
 function walkMedia(x,fn){if(Array.isArray(x)){x.forEach(y=>walkMedia(y,fn));return}if(!x||typeof x!=="object")return;
-  for(const k of Object.keys(x)){const v=x[k];if(k==="fotos"&&Array.isArray(v))fn("foto",x,k);else if(k==="sig"&&typeof v==="string"&&v)fn("sig",x,k);else walkMedia(v,fn)}}
+  for(const k of Object.keys(x)){const v=x[k];if((k==="fotos"||k==="docs")&&Array.isArray(v))fn("foto",x,k);else if(k==="sig"&&typeof v==="string"&&v)fn("sig",x,k);else walkMedia(v,fn)}}
 function allFotoIds(){const ids=new Set();const all=[[...objs.values()],...COLLS.map(n=>[...C[n].map.values()])];
   walkMedia(all,(t,o,k)=>{if(t==="foto")o[k].forEach(f=>ids.add(f.id));else if(!o[k].startsWith("data:"))ids.add(o[k])});return [...ids]}
 const toDataURL=b=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>r(null);fr.readAsDataURL(b)});
@@ -755,8 +898,7 @@ function renderSheet(){
        <div class="actions">
          ${LAD_ONLY?"":`<button class="btn" type="button" data-act="liegtickets">Aufträge${(()=>{const n=tickets().filter(([,t])=>t.lieg===active&&OPEN_ST.includes(t.status)).length;return n?` <span class="nb">${n}</span>`:""})()}</button><span id="mapBtns" style="display:contents">${mapBtns(o)}</span>`}
          <button class="btn" type="button" data-act="csv"${canSave()?"":" hidden"}>CSV-Export</button>
-         ${LAD_ONLY?"":`<button class="btn ghost danger" type="button" data-act="del">${confirmDel?"Wirklich löschen?":"Löschen"}</button>`}
-         ${confirmDel?`<button class="btn ghost" type="button" data-act="nodel">Abbrechen</button>`:""}
+         ${LAD_ONLY?"":`<button class="btn ghost danger" type="button" data-act="del">Löschen</button>`}
        </div>
      </div>
      ${kpiHTML(o)}
@@ -794,7 +936,9 @@ function stammHTML(o){
      <div class="fld"><label for="f-status">Status</label><select id="f-status" data-f="status">
        ${Object.entries(STATUS).map(([k,v])=>`<option value="${k}"${o.status===k?" selected":""}>${v[0]}</option>`).join("")}</select></div>
      ${fotosOn()?`<div class="fld wide"><span class="lbl">Fotos der Liegenschaft</span><div class="fotostrip">${(o.fotos||[]).slice(0,6).map(f=>`<img data-img="${esc(f.id)}" alt="">`).join("")}
-       <button class="btn sm" type="button" data-act="photos" data-sec="_obj" data-rid="_obj">${CAM}${(o.fotos||[]).length?`Alle ${(o.fotos||[]).length} Fotos`:"Fotos hinzufügen"}</button></div></div>`:""}
+       <button class="btn sm" type="button" data-act="photos" data-sec="_obj" data-rid="_obj">${CAM}${(o.fotos||[]).length?`Alle ${(o.fotos||[]).length} Fotos`:"Fotos hinzufügen"}</button></div></div>
+     <div class="fld wide"><span class="lbl">Unterlagen der Liegenschaft</span><div class="fotostrip">${(o.docs||[]).slice(0,5).map(d=>`<span class="docchip">${DOCI}${esc(d.name)}</span>`).join("")}
+       <button class="btn sm" type="button" data-act="docs" data-sec="_obj" data-rid="_obj">${DOCI}${(o.docs||[]).length?`Alle ${(o.docs||[]).length} Unterlagen`:"Unterlagen hinzufügen"}</button></div></div>`:""}
      <div class="fld wide"><label for="f-notiz">Notizen</label><textarea id="f-notiz" data-f="notiz" placeholder="Zugang, Ansprechpartner vor Ort, Schlüssel …">${esc(o.notiz)}</textarea></div>
    </div>
    <div class="sec-head" style="margin-top:6px"><div><h2>Stand je Bereich</h2><p>Verteilung der Zustandsnoten und Prüftermine. Antippen öffnet die Tabelle.</p></div>
@@ -810,7 +954,7 @@ function cellHTML(c,row,ri,sk){
   if(c.t==="date") return `<td><input type="date" ${a} value="${esc(v)}"></td>`;
   if(c.t==="pstat"){const st=ladStatus(row);return `<td class="ro"><button type="button" class="pbtn" data-act="pruef" data-sec="${sk}" data-rid="${row.id}"><span class="due ${st.cls}">${st.txt}</span><span class="pgo">${st.state==="missing"?"Erstprüfung":"Prüfen"} ›</span></button></td>`}
   if(c.t==="due"){const d=dueInfo(row);return `<td class="ro" id="due-${row.id}"><span class="due ${d.cls}">${d.txt}</span></td>`}
-  return `<td><input ${a} value="${esc(v)}" placeholder="${esc(c.ph||"")}"${c.list?' list="liegList"':""}></td>`;
+  return `<td><input ${a} value="${esc(v)}" placeholder="${esc(c.ph||"")}"${c.list?' list="liegList"':c.dl?` list="dl-${c.k}"`:""}></td>`;
 }
 function liegValues(o){return [...new Set([...(o.rows.leiter||[]),...(o.rows.tritt||[])].map(r=>(r.lieg||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"de"))}
 let ladFilter="";
@@ -820,12 +964,12 @@ function secHTML(o,s,eyebrow){
   const lv=LAD_ONLY?liegValues(o):[];if(ladFilter&&!lv.includes(ladFilter))ladFilter="";
   const filt=LAD_ONLY&&lv.length?`<label class="fld" style="min-width:220px"><span class="lbl">Liegenschaft / Gebäude</span><select id="ladFilter"><option value="">Alle (${rows.length})</option>${lv.map(v=>`<option value="${esc(v)}"${v===ladFilter?" selected":""}>${esc(v)} (${rows.filter(r=>(r.lieg||"").trim()===v).length})</option>`).join("")}</select></label>`:"";
   const head=`<div class="sec-head"><div>${eyebrow?`<div class="eyebrow">${eyebrow}</div>`:""}<h2>${s.label}</h2><p>${s.hint}</p></div>
-     <div class="actions" style="align-items:flex-end">${filt}${isLad(s)&&canSave()?`<button class="btn" type="button" data-act="ladlist">Bestandsliste PDF</button>`:""}<button class="btn pri" type="button" data-act="addrow" data-sec="${s.key}">+ Zeile</button></div></div>${LAD_ONLY?`<datalist id="liegList">${lv.map(v=>`<option value="${esc(v)}">`).join("")}</datalist>`:""}`;
+     <div class="actions" style="align-items:flex-end">${filt}${LAD_ONLY?`<button class="btn" type="button" data-act="hist">Historie</button>`:""}${isLad(s)&&canSave()?`<button class="btn" type="button" data-act="ladlist">Bestandsliste PDF</button>`:""}<button class="btn pri" type="button" data-act="addrow" data-sec="${s.key}">+ Zeile</button></div></div>${LAD_ONLY?`<datalist id="liegList">${lv.map(v=>`<option value="${esc(v)}">`).join("")}</datalist>`:""}`;
   if(!rows.length) return head+`<div class="empty">Noch keine Einträge. Mit „+ Zeile“ beginnst du die Tabelle.</div>`;
-  return head+`<div class="tw"><table style="min-width:${Math.max(640,s.cols.length*118+(fotosOn()?150:80))}px"><thead><tr><th>#</th>${s.cols.map(c=>`<th${c.t==="num"?' style="text-align:right"':""}>${c.l}</th>`).join("")}${fotosOn()?"<th>Fotos</th>":""}${!LAD_ONLY&&hasZ(s)?"<th>Auftrag</th>":""}<th></th></tr></thead>
-   <tbody>${rows.map((r,i)=>ladFilter&&(r.lieg||"").trim()!==ladFilter?"":`<tr><td class="idx">${i+1}</td>${s.cols.map(c=>cellHTML(c,r,i,s.key)).join("")}${fotosOn()?`<td class="ph">${phBtn(s.key,r)}</td>`:""}${!LAD_ONLY&&hasZ(s)?`<td class="ph">${tkBtn(s.key,r)}</td>`:""}
+  return head+`<div class="tw"><table style="min-width:${Math.max(640,s.cols.length*118+(fotosOn()?240:80))}px"><thead><tr><th>#</th>${s.cols.map(c=>`<th${c.t==="num"?' style="text-align:right"':""}>${c.l}</th>`).join("")}${fotosOn()?"<th>Fotos</th><th>Unterlagen</th>":""}${!LAD_ONLY&&hasZ(s)?"<th>Auftrag</th>":""}<th></th></tr></thead>
+   <tbody>${rows.map((r,i)=>ladFilter&&(r.lieg||"").trim()!==ladFilter?"":`<tr><td class="idx">${i+1}</td>${s.cols.map(c=>cellHTML(c,r,i,s.key)).join("")}${fotosOn()?`<td class="ph">${phBtn(s.key,r)}</td><td class="ph">${docBtn(s.key,r)}</td>`:""}${!LAD_ONLY&&hasZ(s)?`<td class="ph">${tkBtn(s.key,r)}</td>`:""}
      <td class="del">${delRow===r.id?`<button class="btn sm danger" type="button" data-act="delrow" data-sec="${s.key}" data-ri="${i}">Mit Protokollen löschen?</button>`:`<button class="x" type="button" data-act="delrow" data-sec="${s.key}" data-ri="${i}" aria-label="Zeile ${i+1} löschen">×</button>`}</td></tr>`).join("")}</tbody>
-   ${numCols.length&&!isLad(s)?`<tfoot><tr><td></td>${s.cols.map(c=>`<td data-sum="${c.k}">${c.t==="num"?"Σ "+rows.reduce((a,x)=>a+num(x[c.k]),0):""}</td>`).join("")}${fotosOn()?"<td></td>":""}${!LAD_ONLY&&hasZ(s)?"<td></td>":""}<td></td></tr></tfoot>`:""}
+   ${numCols.length&&!isLad(s)?`<tfoot><tr><td></td>${s.cols.map(c=>`<td data-sum="${c.k}">${c.t==="num"?"Σ "+rows.reduce((a,x)=>a+num(x[c.k]),0):""}</td>`).join("")}${fotosOn()?"<td></td><td></td>":""}${!LAD_ONLY&&hasZ(s)?"<td></td>":""}<td></td></tr></tfoot>`:""}${s.cols.filter(c=>c.dl).map(c=>`<datalist id="dl-${c.k}">${c.dl.map(x=>`<option value="${esc(x)}">`).join("")}</datalist>`).join("")}
    </table></div>
    <div><button class="btn ghost" type="button" data-act="addrow" data-sec="${s.key}">+ Weitere Zeile</button></div>`;
 }
@@ -851,8 +995,9 @@ document.addEventListener("input",e=>{
   if(t.closest("#imp"))return;
   if(!active||!objs.has(active))return;
   const o=objs.get(active);
-  if(t.dataset.f){if(o[t.dataset.f]===t.value)return;o[t.dataset.f]=t.value;schedule(active);refreshLive();return}
+  if(t.dataset.f){if(o[t.dataset.f]===t.value)return;o[t.dataset.f]=t.value;schedule(active);histEdit("obj:"+active,objInfo(active,o),OBJ_FL[t.dataset.f]||t.dataset.f);refreshLive();return}
   if(t.dataset.sec&&t.dataset.c){const row=o.rows[t.dataset.sec][+t.dataset.ri];if(!row||row[t.dataset.c]===t.value)return;row[t.dataset.c]=t.value;
+    {const sc=SECTIONS.find(x=>x.key===t.dataset.sec),cl=sc&&sc.cols.find(c=>c.k===t.dataset.c);histEdit("row:"+row.id,rowInfo(active,t.dataset.sec,row),cl?cl.l:t.dataset.c)}
     if(t.classList.contains("z"))t.className="z z"+(t.value||0);
     schedule(active);if(t.classList.contains("z")&&!LAD_ONLY){renderSheet();const n=document.getElementById(t.id);if(n)n.focus()}else refreshLive()}
 });
@@ -867,17 +1012,24 @@ document.addEventListener("click",e=>{
   const act=b.dataset.act, o=objs.get(active);
   if(act==="new")return newObj();
   if(act==="import")return openImport();
-  if(act==="addrow"){const r={id:rid()};SECTIONS.find(s=>s.key===b.dataset.sec).cols.forEach(c=>{if(c.def)r[c.k]=c.def});if(LAD_ONLY&&ladFilter)r.lieg=ladFilter;o.rows[b.dataset.sec].push(r);schedule(active);renderSheet();
+  if(act==="addrow"){const r={id:rid()};SECTIONS.find(s=>s.key===b.dataset.sec).cols.forEach(c=>{if(c.def)r[c.k]=c.def});if(LAD_ONLY&&ladFilter)r.lieg=ladFilter;o.rows[b.dataset.sec].push(r);schedule(active);histEdit("row:"+r.id,rowInfo(active,b.dataset.sec,r),null,"angelegt");renderSheet();
     const first=document.querySelector(`#c-${b.dataset.sec}-${r.id}-${SECTIONS.find(s=>s.key===b.dataset.sec).cols[0].k}`);if(first)first.focus();return}
   if(act==="photos")return openPhotos(b.dataset.sec,b.dataset.rid);
+  if(act==="docs")return openDocs(b.dataset.sec,b.dataset.rid);
   if(act==="mkticket")return mangelTicket(b.dataset.sec,b.dataset.rid);
   if(act==="ladlist"){const m=bestandModel();return outDoc([m],`Bestandsliste Leitern und Tritte ${LAD_ONLY?(ladFilter||o.name||""):(o.name||"")}`.trim(),"pdf")}
   if(act==="liegtickets"){MS.auftraege.lieg=active;MS.auftraege.f="open";return setView("auftraege")}
   if(act==="pruef")return openPruef(b.dataset.sec,b.dataset.rid);
-  if(act==="delrow"){const row=o.rows[b.dataset.sec][+b.dataset.ri];
-    if(row&&(row.pruef||[]).length&&delRow!==row.id){delRow=row.id;renderSheet();return}delRow=null;
-    const [gone]=o.rows[b.dataset.sec].splice(+b.dataset.ri,1);schedule(active);renderSheet();(gone&&gone.fotos||[]).forEach(f=>IMG.del(f.id));(gone&&gone.pruef||[]).forEach(q=>{if(q.sig&&!q.sig.startsWith("data:"))IMG.del(q.sig)});return}
-  if(act==="del"){if(!confirmDel){confirmDel=true;renderSheet();return}deleteObj(active);return}
+  if(act==="hist")return openHistDlg();
+  if(act==="delrow"){const sec=b.dataset.sec,row=o.rows[sec][+b.dataset.ri];if(!row)return;const oid=active,info=rowInfo(oid,sec,row);
+    const np=(row.pruef||[]).filter(q=>q.done).length,nf=(row.fotos||[]).length;
+    return confirmDelete({title:"Eintrag",label:`${info.area}: ${info.label}`,lines:[info.liegName,np?`${np} Prüfprotokoll${np>1?"e":""}`:"",nf?`${nf} Foto${nf>1?"s":""}`:""],
+      warn:np?"Mit dem Eintrag werden auch alle Prüfprotokolle entfernt.":"",
+      onConfirm:grund=>{const ob=objs.get(oid);if(!ob)return;const i=ob.rows[sec].findIndex(x=>x.id===row.id);if(i<0)return;const [gone]=ob.rows[sec].splice(i,1);schedule(oid);
+        histAdd(Object.assign({act:"gelöscht",grund,snap:{type:"row",obj:oid,sec,index:i,data:clone(gone)}},info));renderSheet();setSave("ok","Gelöscht, Kopie in der Historie")}})}
+  if(act==="del"){const oid=active,info=objInfo(oid,o),n=Object.values(o.rows).reduce((a,r)=>a+r.length,0);
+    return confirmDelete({title:"Liegenschaft",label:info.label,lines:[o.adresse,`${n} Tabelleneinträge`],warn:"Alle Tabellen, Fotos und Prüfprotokolle dieser Liegenschaft werden mit gelöscht. Aufträge, Wartungspläne, Anlagen und Schlüssel bleiben erhalten.",
+      onConfirm:grund=>{const snap=clone(objs.get(oid));deleteObj(oid);histAdd(Object.assign({act:"gelöscht",grund,snap:{type:"obj",id:oid,data:snap}},info));setSave("ok","Gelöscht, Kopie in der Historie")}})}
   if(act==="nodel"){confirmDel=false;renderSheet();return}
   if(act==="csv")return exportCSV(o);
 });
@@ -889,10 +1041,9 @@ function newId(){return mode==="db"?col.doc().id:rid()}
 function newObj(){
   const id=newId();const o=blankObj();o.datum=today();
   objs.set(id,o);active=id;tab="stamm";confirmDel=false;
-  schedule(id);renderList();renderSheet();const n=$("#f-name");if(n)n.focus();
+  schedule(id);histEdit("obj:"+id,objInfo(id,o),null,"angelegt");renderList();renderSheet();const n=$("#f-name");if(n)n.focus();
 }
 async function deleteObj(id){
-  const gone=objs.get(id);if(gone){(gone.fotos||[]).forEach(f=>IMG.del(f.id));Object.values(gone.rows).forEach(rs=>rs.forEach(r=>(r.fotos||[]).forEach(f=>IMG.del(f.id))))}
   clearTimeout(timers[id]);dirty.delete(id);objs.delete(id);active=sorted()[0]?.[0]||null;confirmDel=false;
   renderList();renderSheet();
   try{if(mode==="db")await col.doc(id).delete();else saveLocal();setSave("ok",savedLabel())}catch(e){setSave("err","Löschen fehlgeschlagen")}
@@ -910,7 +1061,7 @@ const IMP_FIELDS=[
 ];
 let imp={rows:[],head:[],map:{},skipDup:true,msg:"",busy:false};
 function openImport(){imp={rows:[],head:[],map:{},skipDup:true,msg:"",busy:false};$("#imp").hidden=false;renderImport();}
-function closeImport(){$("#imp").hidden=true;$("#imp").innerHTML="";restore=null;tplState=null;if(recDlg){finishNew();recDlg=null;afterRec();return}if(photo||pr){photo=null;pr=null;renderSheet()}}
+function closeImport(){$("#imp").hidden=true;$("#imp").innerHTML="";restore=null;tplState=null;histDlg=false;mailImp=null;termImp=null;if(docDlg){docDlg.pages.forEach(p=>URL.revokeObjectURL(p.url));docDlg=null;renderSheet()}if(recDlg){finishNew();recDlg=null;afterRec();return}if(photo||pr){photo=null;pr=null;renderSheet()}}
 function guessMap(head){
   const map={},used=new Set();
   IMP_FIELDS.forEach(f=>{const i=head.findIndex((h,ix)=>!used.has(ix)&&f.re.test(String(h).trim()));if(i>=0){map[f.k]=i;used.add(i)}});
@@ -994,19 +1145,26 @@ function renderImport(){
   const pa=$("#impPaste");if(pa)pa.addEventListener("paste",()=>setTimeout(()=>{if(pa.value.trim())setTable(parseText(pa.value.trim()))},0));
 }
 $("#imp").addEventListener("click",e=>{
-  if(e.target.id==="imp"){if(!(restore&&restore.busy)&&!(pr&&pr.view==="new"))closeImport();return}
+  if(e.target.id==="imp"){if(!(restore&&restore.busy)&&!(pr&&pr.view==="new")&&!(docDlg&&(docDlg.pages.length||docDlg.busy)))closeImport();return}
   const rs=e.target.closest("[data-rs]");if(rs){if(rs.dataset.rs==="close"){if(!restore.busy){restore=null;closeImport()}}else if(!restore.busy)doRestore();return}
   if(e.target.closest("[data-ph]"))return photoClick(e);
   if(e.target.closest("[data-pr]"))return pruefClick(e);
+  if(docDlg&&e.target.closest("[data-dc]"))return docClick(e);
   if(recDlg&&e.target.closest("[data-rd]"))return recClick(e);
   if(tplState&&e.target.closest("[data-tp]"))return tplClick(e);
+  if(mailImp&&e.target.closest("[data-mi]"))return mailClick(e);
+  if(termImp&&e.target.closest("[data-ti]"))return termClick(e);
   const b=e.target.closest("[data-imp]");if(!b)return;
   const a=b.dataset.imp;
   if(a==="close")closeImport();
   if(a==="reset"){imp.head=[];imp.rows=[];imp.msg="";renderImport()}
   if(a==="go")doImport();
 });
+$("#imp").addEventListener("paste",e=>{if(mailImp&&e.target.id==="miRaw")setTimeout(()=>{mailImp.raw=e.target.value;if(mailImp.raw.trim())mailParse()},0);
+  if(termImp&&e.target.id==="tiRaw")setTimeout(()=>{termImp.raw=e.target.value;if(termImp.raw.trim())termParse()},0)});
 $("#imp").addEventListener("change",e=>{
+  if(mailImp){mailInput(e);return}
+  if(termImp){if(e.target.id!=="tiFile")termInput(e);return}
   if(recDlg){recInput(e);return}
   if(tplState){tplInput(e);return}
   if(pr&&pr.view==="new"){pruefInput(e);return}
@@ -1014,6 +1172,8 @@ $("#imp").addEventListener("change",e=>{
   if(e.target.id==="impSkip"){imp.skipDup=e.target.checked;renderImport()}
 });
 $("#imp").addEventListener("input",e=>{
+  if(mailImp){mailInput(e);return}
+  if(termImp){termInput(e);return}
   if(recDlg){if(e.target.tagName!=="SELECT"&&e.target.type!=="file")recInput(e);return}
   if(pr&&pr.view==="new"&&e.target.type!=="radio"&&e.target.type!=="checkbox"&&e.target.tagName!=="SELECT"){pruefInput(e);return}if(e.target.id==="impPaste"){const v=e.target.value.trim();clearTimeout(imp.t);if(v.includes("\n"))imp.t=setTimeout(()=>setTable(parseText(v)),900)}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#imp").hidden&&!(restore&&restore.busy)&&!(pr&&pr.view==="new"))closeImport()});
@@ -1029,6 +1189,7 @@ async function doImport(){
   if(mode!=="db")saveLocal();
   imp.busy=false;closeImport();
   if(firstId){active=firstId;tab="stamm"}
+  if(done)histAdd({act:"angelegt",area:"Liegenschaften",label:`${done} Liegenschaften aus Tabelle importiert`});
   renderList();renderSheet();setSave("ok",`${done} Liegenschaften angelegt`);
 }
 
@@ -1164,6 +1325,7 @@ async function finishPruef(){
   const o=objs.get(ctx.obj),r=o&&o.rows[ctx.sec].find(x=>x.id===ctx.rid);
   if(!r){closeImport();return}
   r.pruef=(r.pruef||[]).concat(p);schedule(ctx.obj);
+  histAdd(Object.assign({act:"Prüfung abgeschlossen",note:`${PRUEF_ARTEN[p.art]} · ${p.erg==="ok"?"bestanden":p.erg==="gesperrt"?"gesperrt":"ausgesondert"} · Prüfer ${p.pruefer}`},rowInfo(ctx.obj,ctx.sec,r)));
   try{localStorage.setItem("begehung-pruefer",JSON.stringify({pruefer:p.pruefer,quali:p.quali}))}catch(e){}
   if(pr&&pr.rid===ctx.rid){pr.view=p.id;renderPruef()}
   refreshLive();
@@ -1247,6 +1409,106 @@ function pruefInput(e){
   prReady();
 }
 
+/* ---------- Unterlagen: Fotos von Dokumenten → PDF, vorhandene PDFs anhängen ---------- */
+const DOCI='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h6"/></svg>';
+const DOC_NAMES=["Stromlaufplan","Verteilerplan / Belegungsplan","Prüfprotokoll E-Check","Messprotokoll","Wartungsbericht","Herstellerunterlagen","Bedienungsanleitung","Rechnung","Angebot","Sonstiges"];
+function docBtn(sec,r){const n=(r.docs||[]).length;
+  return `<button type="button" class="phbtn${n?"":" none"}" data-act="docs" data-sec="${sec}" data-rid="${r.id}" aria-label="${n?n+" Unterlagen":"Unterlage hinzufügen"}">${DOCI}${n||"+"}</button>`}
+let docDlg=null;
+function docTarget(){const o=objs.get(docDlg.obj);if(!o)return null;return docDlg.sec==="_obj"?o:(o.rows[docDlg.sec]||[]).find(r=>r.id===docDlg.rid)||null}
+function docInfo(){const o=objs.get(docDlg.obj),t=docTarget();return docDlg.sec==="_obj"?objInfo(docDlg.obj,o):rowInfo(docDlg.obj,docDlg.sec,t)}
+function openDocs(sec,rid){docDlg={obj:active,sec,rid,mode:"list",pages:[],name:"",busy:"",msg:""};$("#imp").hidden=false;renderDocs()}
+function fmtSize(n){return n>1048576?(n/1048576).toFixed(1).replace(".",",")+" MB":Math.max(1,Math.round(n/1024))+" KB"}
+function renderDocs(){
+  const t=docTarget();if(!t){closeImport();return}
+  const ds=t.docs||[],info=docInfo(),d=docDlg;let body,foot;
+  if(d.mode==="new"){
+    body=`<div class="fld"><label for="dc-name">Bezeichnung</label><input id="dc-name" list="dc-names" value="${esc(d.name)}" placeholder="z. B. Stromlaufplan"><datalist id="dc-names">${DOC_NAMES.map(x=>`<option value="${esc(x)}">`).join("")}</datalist></div>
+      <div class="pages">${d.pages.map((p,i)=>`<div class="pg"><img src="${p.url}" alt="Seite ${i+1}"><span class="pgn">${i+1}</span><button class="x" type="button" data-dc="pdel" data-i="${i}" aria-label="Seite ${i+1} entfernen">×</button>
+        <div class="pgmv">${i?`<button class="btn sm" type="button" data-dc="up" data-i="${i}" aria-label="Seite nach vorn">‹</button>`:""}${i<d.pages.length-1?`<button class="btn sm" style="margin-left:auto" type="button" data-dc="down" data-i="${i}" aria-label="Seite nach hinten">›</button>`:""}</div></div>`).join("")}
+        <label class="addph" for="dcCam">${CAM}<span>${d.busy||(d.pages.length?"Weitere Seite":"Erste Seite fotografieren oder auswählen")}</span></label></div>
+      <input type="file" id="dcCam" accept="image/*" multiple hidden>
+      <p class="note" style="margin:0">Jedes Foto wird eine A4-Seite. Tipp: Dokument flach hinlegen, von oben fotografieren, gutes Licht.</p>
+      ${d.msg?`<div class="msg err">${esc(d.msg)}</div>`:""}`;
+    foot=`<button class="btn ghost" type="button" data-dc="list">Zurück</button><div class="actions"><button class="btn pri" type="button" data-dc="save"${d.pages.length&&!d.busy?"":" disabled"}>Als PDF speichern${d.pages.length?` (${d.pages.length} Seite${d.pages.length>1?"n":""})`:""}</button></div>`;
+  }else{
+    body=`${ds.length?`<div class="plist">${ds.map(x=>`<div class="prow"><span class="d">${new Date(x.t).toLocaleDateString("de-DE")}</span><div><b>${esc(x.name)}</b><small>${x.pages?x.pages+" Seite"+(x.pages>1?"n":"")+" · ":""}${x.size?fmtSize(x.size):""}${x.src==="pdf"?" · PDF-Datei":""}</small></div>
+        <span></span><div class="actions" style="flex-wrap:nowrap"><button class="btn sm" type="button" data-dc="open" data-id="${esc(x.id)}">Öffnen</button><button class="btn sm ghost danger" type="button" data-dc="del" data-id="${esc(x.id)}">Löschen</button></div></div>`).join("")}</div>`
+      :`<div class="empty">Noch keine Unterlagen. Fotografiere ein Dokument oder hänge eine vorhandene PDF-Datei an.</div>`}
+      <div class="actions"><button class="btn pri" type="button" data-dc="new">${CAM}Dokument fotografieren</button><label class="btn" for="dcPdf">${DOCI}PDF-Datei hinzufügen</label><input type="file" id="dcPdf" accept="application/pdf,.pdf" multiple hidden></div>
+      ${d.busy?`<div class="msg busy">${esc(d.busy)}</div>`:""}${d.msg?`<div class="msg err">${esc(d.msg)}</div>`:""}`;
+    foot=`<span></span><div class="actions"><button class="btn pri" type="button" data-dc="close">Fertig</button></div>`;
+  }
+  $("#imp").innerHTML=`<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dcT" style="max-width:760px">
+    <div class="dlg-h"><div><h2 id="dcT">${d.mode==="new"?"Dokument fotografieren":"Unterlagen"}</h2><p>${esc(info.area)}: ${esc(info.label)}</p></div><button class="x" type="button" data-dc="close" aria-label="Schließen">×</button></div>
+    <div class="dlg-b">${body}</div><div class="dlg-f">${foot}</div></div>`;
+  const cam=$("#dcCam");if(cam)cam.addEventListener("change",()=>{docAddPages([...cam.files]);cam.value=""});
+  const pf=$("#dcPdf");if(pf)pf.addEventListener("change",()=>{docAddPdfs([...pf.files]);pf.value=""});
+  const nm=$("#dc-name");if(nm)nm.addEventListener("input",()=>{docDlg.name=nm.value});
+}
+async function shrinkDoc(file){
+  try{const bmp=await createImageBitmap(file,{imageOrientation:"from-image"});const s=Math.min(1,2200/Math.max(bmp.width,bmp.height));const c=document.createElement("canvas");
+    c.width=Math.round(bmp.width*s);c.height=Math.round(bmp.height*s);const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(bmp,0,0,c.width,c.height);
+    return await new Promise(r=>c.toBlob(b=>r(b||file),"image/jpeg",.85))}catch(e){return file}}
+async function docAddPages(files){
+  files=files.filter(f=>/^image\//.test(f.type)||/\.(jpe?g|png|heic|webp)$/i.test(f.name));if(!files.length)return;
+  docDlg.busy=`Bereite ${files.length} Seite${files.length>1?"n":""} vor …`;docDlg.msg="";renderDocs();
+  for(const f of files){const b=await shrinkDoc(f);docDlg.pages.push({blob:b,url:URL.createObjectURL(b)})}
+  docDlg.busy="";renderDocs();
+}
+async function imagesToPDF(blobs,title){
+  const L=await loadPDFLib(),doc=await L.PDFDocument.create();doc.setTitle(title);doc.setCreator(APP_LABEL);
+  for(const b of blobs){const bytes=await b.arrayBuffer();let im;try{im=await doc.embedJpg(bytes)}catch(e){im=await doc.embedPng(bytes)}
+    const land=im.width>im.height*1.15,W=land?841.89:595.28,H=land?595.28:841.89,M=18,sc=Math.min((W-2*M)/im.width,(H-2*M)/im.height),pg=doc.addPage([W,H]);
+    pg.drawImage(im,{x:(W-im.width*sc)/2,y:(H-im.height*sc)/2,width:im.width*sc,height:im.height*sc})}
+  return new Blob([await doc.save()],{type:"application/pdf"});
+}
+function docAttach(entry){const ctx={obj:docDlg.obj,sec:docDlg.sec,rid:docDlg.rid};const o=objs.get(ctx.obj);if(!o)return;
+  const t=ctx.sec==="_obj"?o:(o.rows[ctx.sec]||[]).find(r=>r.id===ctx.rid);if(!t)return;
+  t.docs=(t.docs||[]).concat(entry);schedule(ctx.obj);
+  histAdd(Object.assign({act:"Unterlage hinzugefügt",note:entry.name},ctx.sec==="_obj"?objInfo(ctx.obj,o):rowInfo(ctx.obj,ctx.sec,t)))}
+async function docSave(){
+  const d=docDlg,name=(d.name||"").trim()||`Dokument ${new Date().toLocaleDateString("de-DE")}`;
+  d.busy="PDF wird erstellt …";renderDocs();
+  try{const pdf=await imagesToPDF(d.pages.map(p=>p.blob),name);const id=await IMG.put(pdf,"d"+rid());
+    docAttach({id,name,pages:d.pages.length,size:pdf.size,t:Date.now(),src:"foto"});
+    d.pages.forEach(p=>URL.revokeObjectURL(p.url));d.pages=[];d.name="";d.mode="list";d.busy="";d.msg="";renderDocs();setSave("ok",`„${name}“ als PDF gespeichert`)}
+  catch(e){d.busy="";d.msg=window.PDFLib?"Das PDF konnte nicht erstellt werden.":"Für die erste PDF-Erstellung wird einmal Internet benötigt.";renderDocs()}
+}
+async function docAddPdfs(files){
+  files=files.filter(f=>f.type==="application/pdf"||/\.pdf$/i.test(f.name));if(!files.length)return;
+  for(const f of files){docDlg.busy=`Speichere ${f.name} …`;renderDocs();
+    try{const blob=new Blob([await f.arrayBuffer()],{type:"application/pdf"});const id=await IMG.put(blob,"d"+rid());
+      docAttach({id,name:f.name.replace(/\.pdf$/i,""),size:blob.size,t:Date.now(),src:"pdf"})}
+    catch(e){docDlg.msg=e&&e.code==="quota_exceeded"?"Der Speicher ist voll.":`${f.name} konnte nicht gespeichert werden.`}}
+  docDlg.busy="";renderDocs();
+}
+async function docOpen(id){
+  const t=docTarget(),x=(t.docs||[]).find(z=>z.id===id);if(!x)return;
+  const b=await IMG.blob(id);if(!b){docDlg.msg="Die Datei wurde auf diesem Gerät nicht gefunden.";return renderDocs()}
+  const pdf=b.type==="application/pdf"?b:new Blob([b],{type:"application/pdf"});
+  if(OFFLINE&&!PWA){const a=document.createElement("a");a.href=URL.createObjectURL(pdf);a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),1000);return}
+  try{await saveFile(x.name.replace(/[\\/:*?"<>|]/g,"-")+".pdf",new Uint8Array(await pdf.arrayBuffer()),"application/pdf")}catch(e){}
+}
+function docDelete(id){
+  const t=docTarget(),x=(t.docs||[]).find(z=>z.id===id);if(!x)return;const info=docInfo(),ctx={obj:docDlg.obj,sec:docDlg.sec,rid:docDlg.rid};
+  confirmDelete({title:"Unterlage",label:x.name,lines:[`${info.area}: ${info.label}`,info.liegName],onConfirm:grund=>{
+    const o=objs.get(ctx.obj),tt=ctx.sec==="_obj"?o:o&&(o.rows[ctx.sec]||[]).find(r=>r.id===ctx.rid);if(!tt)return;
+    tt.docs=(tt.docs||[]).filter(z=>z.id!==id);schedule(ctx.obj);
+    histAdd(Object.assign({},info,{act:"gelöscht",label:`Unterlage „${x.name}“ · ${info.label}`,grund,snap:{type:"doc",obj:ctx.obj,sec:ctx.sec,rid:ctx.rid,data:clone(x)}}));
+    if(docDlg)renderDocs();setSave("ok","Gelöscht, Kopie in der Historie")}});
+}
+function docClick(e){const b=e.target.closest("[data-dc]");if(!b)return;const a=b.dataset.dc,d=docDlg;
+  if(a==="close"){d.pages.forEach(p=>URL.revokeObjectURL(p.url));return closeImport()}
+  if(a==="new"){d.mode="new";d.msg="";return renderDocs()}
+  if(a==="list"){d.pages.forEach(p=>URL.revokeObjectURL(p.url));d.pages=[];d.mode="list";return renderDocs()}
+  if(a==="pdel"){const [p]=d.pages.splice(+b.dataset.i,1);if(p)URL.revokeObjectURL(p.url);return renderDocs()}
+  if(a==="up"||a==="down"){const i=+b.dataset.i,j=a==="up"?i-1:i+1;[d.pages[i],d.pages[j]]=[d.pages[j],d.pages[i]];return renderDocs()}
+  if(a==="save")return docSave();
+  if(a==="open")return docOpen(b.dataset.id);
+  if(a==="del")return docDelete(b.dataset.id);
+}
+
 /* ---------- Fotos je Zeile ---------- */
 function tkBtn(sec,r){const t=r.ticket&&C.auftraege&&C.auftraege.map.get(r.ticket);
   if(t)return `<button type="button" class="phbtn" data-act="mkticket" data-sec="${sec}" data-rid="${r.id}" title="Auftrag öffnen"><span class="stp ${A_STATUS[t.status]?.[1]||""}">${esc(t.nr)}</span></button>`;
@@ -1290,7 +1552,7 @@ async function addPhotos(files){
   for(const f of files){
     try{const id=await IMG.add(f);
       const o=objs.get(ctx.obj);const t=ctx.sec==="_obj"?o:o&&o.rows[ctx.sec].find(r=>r.id===ctx.rid);
-      if(t){t.fotos=(t.fotos||[]).concat({id,t:Date.now()});schedule(ctx.obj)}}
+      if(t){t.fotos=(t.fotos||[]).concat({id,t:Date.now()});schedule(ctx.obj);histEdit(ctx.sec==="_obj"?"obj:"+ctx.obj:"row:"+ctx.rid,ctx.sec==="_obj"?objInfo(ctx.obj,o):rowInfo(ctx.obj,ctx.sec,t),"Fotos")}}
     catch(e){if(photo)photo.msg=e&&e.code==="quota_exceeded"?"Speicherplatz für Fotos ist voll.":"Ein Foto konnte nicht gespeichert werden."}
     if(photo){photo.busy--;renderPhoto()}
   }
@@ -1303,7 +1565,8 @@ function photoClick(e){
   if(a==="prev"||a==="next"){const i=fs.findIndex(f=>f.id===photo.view)+(a==="next"?1:-1);if(fs[i])photo.view=fs[i].id}
   if(a==="del")photo.del=b.dataset.id;
   if(a==="delno")photo.del=null;
-  if(a==="delok"){const id=b.dataset.id;t.fotos=fs.filter(f=>f.id!==id);photo.del=null;schedule(photo.obj);IMG.del(id)}
+  if(a==="delok"){const id=b.dataset.id;t.fotos=fs.filter(f=>f.id!==id);photo.del=null;schedule(photo.obj);IMG.del(id);
+    histAdd(Object.assign({act:"Foto gelöscht"},photo.sec==="_obj"?objInfo(photo.obj,t):rowInfo(photo.obj,photo.sec,t)))}
   renderPhoto();
 }
 $("#imp").addEventListener("dragover",e=>{if(photo){e.preventDefault()}});
@@ -1311,47 +1574,68 @@ $("#imp").addEventListener("drop",e=>{if(photo&&!photo.view){e.preventDefault();
 
 /* ---------- Sicherung einlesen ---------- */
 let restore=null;
+function mergePlan(d){
+  const newer=(a,b)=>!a?b:!b?a:((b.updated||b.until||b.at||0)>(a.updated||a.until||a.at||0)?b:a);
+  const hist={};if(C.historie){C.historie.map.forEach((h,id)=>hist[id]=h);Object.entries(d.historie||{}).forEach(([id,h])=>hist[id]=newer(hist[id],h))}
+  const del={};Object.values(hist).forEach(h=>{if(h&&h.act==="gelöscht"&&h.snap&&!h.restored){const s=h.snap,k=s.type==="rec"?`rec:${s.m}:${s.id}`:s.type==="obj"?`obj:${s.id}`:"";if(k)del[k]=Math.max(del[k]||0,h.at||0)}});
+  const ops=[],cnt={neu:0,upd:0,keep:0,del:0};
+  const plan=(kind,n,local,inc)=>{inc=inc||{};new Set([...local.keys(),...Object.keys(inc)]).forEach(id=>{
+    const L=local.get(id),I=inc[id],tL=(L&&L.updated)||0,tI=(I&&I.updated)||0,dt=del[kind==="obj"?`obj:${id}`:`rec:${n}:${id}`];
+    if(dt&&Math.max(tL,tI)<dt){if(L){ops.push({kind,n,id,op:"del"});cnt.del++}return}
+    if(!I)return;
+    if(!L){ops.push({kind,n,id,op:"set",data:I});cnt.neu++;return}
+    if(tI>tL){ops.push({kind,n,id,op:"set",data:I});cnt.upd++}else if(JSON.stringify(L)!==JSON.stringify(I))cnt.keep++})};
+  plan("obj",null,objs,d.objekte);
+  COLLS.filter(n=>n!=="historie").forEach(n=>plan("rec",n,C[n].map,d[n]));
+  if(C.historie)Object.entries(d.historie||{}).forEach(([id,h])=>{const L=C.historie.map.get(id);if(!L||(newer(L,h)===h&&JSON.stringify(L)!==JSON.stringify(h)))ops.push({kind:"rec",n:"historie",id,op:"set",data:h})});
+  return {ops,cnt};
+}
 function openRestore(d,fname){
-  const ids=Object.keys(d.objekte);d.extra=COLLS.reduce((a,n)=>a+Object.keys(d[n]||{}).length,0);
-  restore={d,fname,neu:ids.filter(id=>!objs.has(id)).length,upd:ids.filter(id=>objs.has(id)).length,total:ids.length,busy:false,msg:""};
+  d.extra=COLLS.reduce((a,n)=>a+Object.keys(d[n]||{}).length,0);
+  restore={d,fname,plan:mergePlan(d),busy:false,msg:""};
   $("#imp").hidden=false;renderRestore();
 }
 function renderRestore(){
-  const r=restore,when=r.d.savedAt?new Date(r.d.savedAt).toLocaleString("de-DE"):"unbekannt";
-  $("#imp").innerHTML=`<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="rsT" style="max-width:560px">
-    <div class="dlg-h"><div><h2 id="rsT">Sicherung einlesen</h2><p>${esc(r.fname)} · gespeichert am ${esc(when)}</p></div>
+  const r=restore,c=r.plan.cnt,when=r.d.savedAt?new Date(r.d.savedAt).toLocaleString("de-DE"):"unbekannt",nothing=!r.plan.ops.length;
+  $("#imp").innerHTML=`<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="rsT" style="max-width:600px">
+    <div class="dlg-h"><div><h2 id="rsT">Sicherung abgleichen</h2><p>${esc(r.fname)} · gespeichert am ${esc(when)}</p></div>
       <button class="x" type="button" data-rs="close" aria-label="Schließen">×</button></div>
     <div class="dlg-b">
-      <dl class="kpis" style="grid-template-columns:repeat(3,1fr)">
-        <div class="kpi"><dt>In der Sicherung</dt><dd>${r.total}</dd></div>
-        <div class="kpi"><dt>Neu</dt><dd>${r.neu}</dd></div>
-        <div class="kpi ${r.upd?"warn":""}"><dt>Werden ersetzt</dt><dd>${r.upd}</dd></div></dl>
-      ${r.d.extra?`<p class="note" style="margin:0">Enthält außerdem ${r.d.extra} Einträge aus Aufträgen, Wartung, Anlagen, Schlüsseln und Tätigkeiten.</p>`:""}${Object.keys(r.d.bilder||{}).length?`<p class="note" style="margin:0">Enthält ${Object.keys(r.d.bilder).length} Fotos und Unterschriften.</p>`:""}<p class="note" style="margin:0">Liegenschaften, die es hier schon gibt, werden durch den Stand aus der Sicherung ersetzt. Alle anderen bleiben unverändert.</p>
+      <dl class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+        <div class="kpi"><dt>Neu</dt><dd>${c.neu}</dd></div>
+        <div class="kpi"><dt>Aktualisiert</dt><dd>${c.upd}</dd></div>
+        <div class="kpi"><dt>Hier neuer</dt><dd>${c.keep}</dd></div>
+        <div class="kpi ${c.del?"warn":""}"><dt>Gelöscht</dt><dd>${c.del}</dd></div></dl>
+      <p class="note" style="margin:0">Neue Einträge kommen hinzu. Wurde ein Eintrag auf beiden Geräten bearbeitet, gilt der zuletzt geänderte Stand. Einträge, die auf einem Gerät gelöscht wurden, werden auch hier gelöscht. „Hier neuer“ heißt: Dieses Gerät hat den aktuelleren Stand, er bleibt.</p>
+      ${Object.keys(r.d.bilder||{}).length?`<p class="note" style="margin:0">Enthält ${Object.keys(r.d.bilder).length} Fotos und Unterschriften.</p>`:""}
+      ${nothing?`<div class="msg ok">Beide Stände sind bereits gleich. Es gibt nichts zu übernehmen.</div>`:""}
       ${r.msg?`<div class="msg ${r.msg.split(":")[0]}">${esc(r.msg.split(/:(.*)/s)[1])}</div>`:""}
     </div>
-    <div class="dlg-f"><span></span><div class="actions"><button class="btn" type="button" data-rs="close">Abbrechen</button>
-      <button class="btn pri" type="button" data-rs="go"${r.busy?" disabled":""}>Sicherung übernehmen</button></div></div></div>`;
+    <div class="dlg-f"><span></span><div class="actions"><button class="btn" type="button" data-rs="close">${nothing?"Schließen":"Abbrechen"}</button>
+      ${nothing?"":`<button class="btn pri" type="button" data-rs="go"${r.busy?" disabled":""}>Abgleichen</button>`}</div></div></div>`;
 }
 async function doRestore(){
-  const r=restore;r.busy=true;let n=0;
+  const r=restore;r.busy=true;
   const remap={},bilder=r.d.bilder||{},bids=Object.keys(bilder);
   if(bids.length&&fotosOn()){let k=0;for(const id of bids){k++;r.msg=`busy:Foto ${k} von ${bids.length} …`;renderRestore();
     try{const b=await (await fetch(bilder[id])).blob();remap[id]=await IMG.put(b,mode==="db"?undefined:id)}catch(e){}}}
   const fix=fs=>(fs||[]).filter(f=>remap[f.id]||!bilder[f.id]).map(f=>remap[f.id]?{...f,id:remap[f.id]}:f);
   walkMedia([r.d.objekte,...COLLS.map(n=>r.d[n]||{})],(t,o,k)=>{if(t==="foto")o[k]=fix(o[k]);else if(!o[k].startsWith("data:")){if(remap[o[k]])o[k]=remap[o[k]];else if(bilder[o[k]])o[k]=bilder[o[k]]}});
-  for(const n of COLLS){const recs=Object.entries(r.d[n]||{});let k=0;
-    for(const [id,rec] of recs){k++;r.msg=`busy:${n}: ${k} von ${recs.length}`;if(k%10===1)renderRestore();
-      try{if(mode==="db")await C[n].ref.doc(id).set(clone(rec));C[n].map.set(id,clone(rec))}catch(e){}}}
-  const list=Object.entries(r.d.objekte);
-  for(const [id,o] of list){
-    r.msg=`busy:Übernehme … ${n+1} von ${list.length}`;renderRestore();
-    const obj=norm(JSON.parse(JSON.stringify(o)));
-    try{if(mode==="db")await col.doc(id).set(obj);objs.set(id,obj);n++}
-    catch(e){r.busy=false;r.msg=`err:Nach ${n} von ${list.length} abgebrochen. Bitte erneut versuchen.`;renderRestore();if(mode!=="db")saveLocal();renderList();return}
+  const ops=r.plan.ops;let k=0;
+  for(const op of ops){k++;if(k%10===1){r.msg=`busy:Übernehme … ${k} von ${ops.length}`;renderRestore()}
+    try{
+      if(op.kind==="obj"){if(op.op==="del"){if(mode==="db")await col.doc(op.id).delete();objs.delete(op.id)}
+        else{const o=norm(clone(op.data));if(mode==="db")await col.doc(op.id).set(o);objs.set(op.id,o)}}
+      else{const c=C[op.n];if(!c)continue;if(op.op==="del"){if(mode==="db")await c.ref.doc(op.id).delete();c.map.delete(op.id)}
+        else{const x=clone(op.data);if(mode==="db")await c.ref.doc(op.id).set(x);c.map.set(op.id,x)}}
+    }catch(e){r.busy=false;r.msg=`err:Nach ${k-1} von ${ops.length} Schritten abgebrochen. Bitte erneut versuchen.`;renderRestore();if(mode!=="db")saveLocal();renderList();return}
   }
   if(mode!=="db")saveLocal();
-  restore=null;closeImport();if(!active||!objs.has(active))active=sorted()[0]?.[0]||null;
-  renderList();renderSheet();if(typeof onCollChange==="function")onCollChange("*");setSave("ok",`${n} Liegenschaften aus Sicherung übernommen`);
+  const c=r.plan.cnt;restore=null;closeImport();if(!active||!objs.has(active))active=sorted()[0]?.[0]||null;
+  if(LAD_ONLY&&typeof ensureBestand==="function")ensureBestand();
+  const txt=`${c.neu} neu, ${c.upd} aktualisiert${c.del?`, ${c.del} gelöscht`:""}`;
+  histAdd({act:"Sicherung abgeglichen",area:"System",label:txt,note:r.fname});
+  renderList();renderSheet();if(typeof onCollChange==="function")onCollChange("*");setSave("ok","Abgeglichen: "+txt);
 }
 
 /* ---------- Dokumente als Modell → PDF (pdf-lib) oder HTML zum Drucken ---------- */
@@ -1474,6 +1758,8 @@ function nextTicketNr(){const y=new Date().getFullYear(),pre=`A-${y}-`;let max=0
   tickets().forEach(([,t])=>{if((t.nr||"").startsWith(pre))max=Math.max(max,parseInt(t.nr.slice(pre.length))||0)});return pre+String(max+1).padStart(3,"0")}
 function nextInv(n,prefix,field){let max=0;recs(n).forEach(([,r])=>{const m=new RegExp("^"+prefix+"-(\\d+)$").exec(r[field]||"");if(m)max=Math.max(max,+m[1])});return `${prefix}-${String(max+1).padStart(3,"0")}`}
 
+const T_ST={geplant:["Geplant","st-arbeit"],erledigt:["Erledigt","st-ok"],abgesagt:["Abgesagt","st-off"]};
+const T_ARTEN=["Einweisung Fremdfirma","Handwerkertermin","Wartung / Prüfung","Begehung","Abnahme","Besprechung","Sonstiges"];
 const MODS={
   auftraege:{label:"Aufträge",single:"Auftrag",photos:true,
     fields:[{k:"nr",l:"Auftrags-Nr.",t:"ro"},{k:"titel",l:"Titel",ph:"Was ist zu tun?",wide:1},{k:"lieg",l:"Liegenschaft",t:"lieg"},{k:"anlage",l:"Anlage / Gerät",t:"anlage"},
@@ -1532,19 +1818,27 @@ const MODS={
       ["Verfügbar",r=>{const v=num(r.anzahl)-keyOut(r);return `<span class="mono" style="color:${v<0?"var(--z4)":"inherit"}">${v}</span>`}]],
     csv:[["Nr.","nr"],["Bezeichnung","bez"],["Liegenschaft",r=>liegName(r.lieg)],["Schließung","schliess"],["Exemplare","anzahl"],["Ausgegeben",r=>keyOut(r)],["Aufbewahrung","ablage"]]
   },
-  taetig:{label:"Tätigkeiten",single:"Tätigkeit",
-    fields:[{k:"datum",l:"Datum",t:"date"},{k:"lieg",l:"Liegenschaft",t:"lieg"},{k:"kat",l:"Art",t:"sel",o:["Begehung","Prüfung","Handwerkerkoordination","Besprechung","Verwaltung / Büro","Fahrt","Notdienst","Sonstiges"]},
-      {k:"dauer",l:"Dauer in Stunden",t:"num"},{k:"km",l:"Gefahrene km",t:"num"},{k:"text",l:"Beschreibung",t:"area",wide:1}],
-    defaults:()=>({datum:today(),kat:"Begehung"}),
-    title:r=>r.text?r.text.slice(0,60):"",
-    month:true,
-    sort:(a,b)=>(b.datum||"").localeCompare(a.datum||""),
-    cols:[["Datum",r=>`<span class="mono">${fmtDate(r.datum)}</span>`],["Liegenschaft",r=>esc(liegShort(r.lieg)||"–")],["Art",r=>esc(r.kat||"–")],["Beschreibung",r=>esc((r.text||"").slice(0,120))],
-      ["Std.",r=>`<span class="mono">${r.dauer?num(r.dauer).toLocaleString("de-DE"):"–"}</span>`],["km",r=>`<span class="mono">${r.km?num(r.km).toLocaleString("de-DE"):"–"}</span>`]],
-    csv:[["Datum",r=>fmtDate(r.datum)],["Liegenschaft",r=>liegName(r.lieg)],["Art","kat"],["Beschreibung","text"],["Stunden",r=>String(num(r.dauer)).replace(".",",")],["km",r=>String(num(r.km)).replace(".",",")]]
+  taetig:{label:"Termine",single:"Termin",
+    fields:[{k:"titel",l:"Termin",ph:"z. B. Einweisung Elektro Beispiel GmbH",wide:1},{k:"datum",l:"Datum",t:"date"},{k:"zeit",l:"Von",t:"time"},{k:"bis",l:"Bis",t:"time"},
+      {k:"art",l:"Art",t:"sel",o:["",...T_ARTEN]},{k:"lieg",l:"Liegenschaft",t:"lieg"},{k:"ort",l:"Treffpunkt",ph:"z. B. Haupteingang"},
+      {k:"firma",l:"Firma / Ansprechpartner",ph:"z. B. Elektro Beispiel GmbH, Herr Muster"},{k:"kontakt",l:"Kontakt",ph:"Telefon oder E-Mail"},
+      {k:"status",l:"Status",t:"sel",o:Object.keys(T_ST),ol:Object.fromEntries(Object.entries(T_ST).map(([k,v])=>[k,v[0]]))},{k:"von",l:"Eingetragen von / Quelle",ph:"z. B. per Telefon"},
+      {k:"notiz",l:"Notiz",t:"area",wide:1}],
+    defaults:()=>({datum:today(),status:"geplant",art:"",uid:rid()}),
+    title:r=>r.titel||(r.text?r.text.slice(0,60):""),
+    filter:{label:"Zeitraum",def:"kommend",opts:[["kommend","Kommende"],["heute","Heute"],["woche","Nächste 7 Tage"],["vergangen","Vergangene"],["all","Alle"]],
+      fn:(r,f)=>{const d=daysUntil(r.datum);if(f==="all")return true;if(d==null)return f==="kommend";
+        if(f==="vergangen")return d<0;if(r.status==="abgesagt"&&f!=="all")return false;return f==="heute"?d===0:f==="woche"?d>=0&&d<=7:d>=0}},
+    sort:(a,b)=>MS.taetig&&MS.taetig.f==="vergangen"?tKey(b).localeCompare(tKey(a)):tKey(a).localeCompare(tKey(b)),
+    cols:[["Datum",r=>`<span class="mono">${dayLabel(r.datum)||"–"}</span>`],["Zeit",r=>`<span class="mono">${esc(tZeit(r))}</span>`],
+      ["Termin",r=>`<b>${esc(MODS.taetig.title(r)||"Ohne Titel")}</b><small>${esc(r.art||r.kat||"")}${r.ort?" · "+esc(r.ort):""}</small>`],
+      ["Liegenschaft",r=>esc(liegShort(r.lieg)||"–")],["Firma / Ansprechpartner",r=>`${esc(r.firma||"–")}${r.kontakt?`<small>${esc(r.kontakt)}</small>`:""}`],
+      ["Status",r=>{const s=T_ST[r.status]||T_ST.geplant,past=r.status!=="erledigt"&&r.status!=="abgesagt"&&daysUntil(r.datum)<0;return `<span class="stp ${past?"st-wartet":s[1]}">${past?"Vorbei":s[0]}</span>`}]],
+    csv:[["Datum",r=>fmtDate(r.datum)],["Zeit",r=>tZeit(r)],["Termin",r=>MODS.taetig.title(r)],["Art",r=>r.art||r.kat||""],["Liegenschaft",r=>liegName(r.lieg)],["Treffpunkt","ort"],
+      ["Firma / Ansprechpartner","firma"],["Kontakt","kontakt"],["Status",r=>(T_ST[r.status]||T_ST.geplant)[0]],["Eingetragen von","von"],["Notiz",r=>r.notiz||r.text||""]]
   }
 };
-const NAV=[["uebersicht","Übersicht"],["lieg","Liegenschaften"],["auftraege","Aufträge"],["wartung","Wartung & Prüfungen"],["anlagen","Anlagen"],["schluessel","Schlüssel"],["taetig","Tätigkeiten"],["berichte","Berichte"]];
+const NAV=[["uebersicht","Übersicht"],["lieg","Liegenschaften"],["auftraege","Aufträge"],["wartung","Wartung & Prüfungen"],["anlagen","Anlagen"],["schluessel","Schlüssel"],["taetig","Termine"],["berichte","Berichte"],["historie","Historie"]];
 let view=LAD_ONLY?"lieg":"uebersicht";
 const MS={};Object.keys(MODS).forEach(k=>MS[k]={q:"",lieg:"",f:MODS[k].filter?.def||"all",month:today().slice(0,7)});
 let calMonth=today().slice(0,7);
@@ -1590,7 +1884,9 @@ function autoGenerate(){
 function createTicket(data,logTxt){
   const id=newRecId("auftraege");const t=Object.assign(MODS.auftraege.defaults(),data);
   if(logTxt)t.log=[{at:Date.now(),t:logTxt}];
-  C.auftraege.map.set(id,t);cTouch("auftraege",id);return id;
+  C.auftraege.map.set(id,t);cTouch("auftraege",id);
+  if(t.titel)histOpen["rec:auftraege:"+id]={id:histAdd(Object.assign({act:"angelegt",fields:[],note:logTxt||""},recInfo("auftraege",id,t))),at:Date.now()};
+  return id;
 }
 function newRecId(n){return mode==="db"&&C[n].ref?C[n].ref.doc().id:rid()}
 
@@ -1599,6 +1895,7 @@ function renderMod(){
   const el=$("#mod");if(!el||view==="lieg")return;
   if(view==="uebersicht")el.innerHTML=dashHTML();
   else if(view==="berichte")el.innerHTML=reportsHTML();
+  else if(view==="historie")el.innerHTML=histPageHTML();
   else el.innerHTML=listHTML(view);
 }
 function liegSelect(id,val,allLabel){return `<select id="${id}"><option value="">${allLabel||"Alle Liegenschaften"}</option>${sorted().map(([k,o])=>`<option value="${k}"${val===k?" selected":""}>${esc((o.nr?o.nr+" ":"")+(o.name||"Ohne Namen"))}</option>`).join("")}</select>`}
@@ -1616,10 +1913,10 @@ function monthOpts(sel){const ms=new Set([today().slice(0,7)]);recs("taetig").fo
 function listHTML(m){
   const M=MODS[m],st=MS[m],rows=filtered(m),total=C[m].map.size;
   let foot="";
-  if(m==="taetig"){const h=rows.reduce((a,r)=>a+num(r.dauer),0),k=rows.reduce((a,r)=>a+num(r.km),0);foot=`<tfoot><tr><td colspan="4">Summe (${rows.length} Einträge)</td><td class="mono">${h.toLocaleString("de-DE")}</td><td class="mono">${k.toLocaleString("de-DE")}</td></tr></tfoot>`}
+
   return `<section class="modcard">
     <div class="mhead"><div><h1>${M.label}</h1><p class="note">${rows.length} von ${total} angezeigt</p></div>
-      <div class="actions">${m==="wartung"?`<button class="btn" type="button" data-mact="tpl">Vorlagen</button>`:""}<button class="btn" type="button" data-mact="csv">CSV-Export</button><button class="btn pri" type="button" data-mact="new">+ ${M.single}</button></div></div>
+      <div class="actions">${m==="wartung"?`<button class="btn" type="button" data-mact="tpl">Vorlagen</button>`:""}${m==="auftraege"?`<button class="btn" type="button" data-mact="mailimp">Aus E-Mail</button>`:""}${m==="taetig"?`<button class="btn" type="button" data-mact="termimp">Aus E-Mail / Einladung</button>`:""}${canSave()?`<button class="btn" type="button" data-mact="pdf">PDF</button>`:""}<button class="btn" type="button" data-mact="csv">CSV-Export</button><button class="btn pri" type="button" data-mact="new">+ ${M.single}</button></div></div>
     <div class="mfilter">
       <input type="search" id="mq" placeholder="Suchen …" value="${esc(st.q)}" aria-label="Suchen">
       ${liegSelect("mlieg",st.lieg)}
@@ -1642,7 +1939,10 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("[data-mact]");if(!b)return;const a=b.dataset.mact;
   if(a==="new"){const mm=MODS[view]?view:"auftraege";const pre={};if(MS[mm]&&MS[mm].lieg)pre.lieg=MS[mm].lieg;newRec(mm,pre)}
   else if(a==="csv")exportModCSV(view,filtered(view));
+  else if(a==="pdf"&&MODS[view])outDoc([listModel(view,filtered(view))],`${MODS[view].label} ${today()}`,"pdf");
   else if(a==="tpl")openTemplates();
+  else if(a==="mailimp")openMailImp();
+  else if(a==="termimp")openTermImp();
   else if(a==="calprev"||a==="calnext"){const [y,m]=calMonth.split("-").map(Number);const d=new Date(y,m-1+(a==="calnext"?1:-1),1);calMonth=ISO(d).slice(0,7);renderMod()}
   else if(a==="rep")runReport(b.dataset.r,b.dataset.k);
 });
@@ -1654,8 +1954,9 @@ function agendaItems(){
   tickets().forEach(([id,t])=>{if(OPEN_ST.includes(t.status)&&t.frist)it.push({d:t.frist,type:"Auftrag",cls:"tk",label:`${t.nr} ${t.titel||""}`,lieg:t.lieg,open:`auftraege:${id}`})});
   recs("wartung").forEach(([id,p])=>{const n=planNext(p);if(n&&!openTicketFor("planId",id))it.push({d:n,type:"Wartung",cls:"wt",label:p.bez||"Wartung",lieg:p.lieg,open:`wartung:${id}`})});
   recs("schluessel").forEach(([id,k])=>keyOpen(k).forEach(a=>{if(a.bis)it.push({d:a.bis,type:"Schlüssel",cls:"ks",label:`Rückgabe ${k.bez||k.nr}: ${a.an}`,lieg:k.lieg,open:`schluessel:${id}`})}));
+  recs("taetig").forEach(([id,t])=>{if(t.datum&&t.status!=="abgesagt"&&t.status!=="erledigt"&&daysUntil(t.datum)>=0)it.push({d:t.datum,type:"Termin",cls:"tm",label:`${t.zeit?t.zeit+" ":""}${MODS.taetig.title(t)||"Termin"}`,lieg:t.lieg,open:`taetig:${id}`,k:t.zeit||""})});
   objs.forEach((o,oid)=>["leiter","tritt"].forEach(sec=>(o.rows[sec]||[]).forEach(r=>{const n=ladNext(r);if(n)it.push({d:n,type:sec==="leiter"?"Leiter":"Tritt",cls:"ld",label:`Prüfung ${r.inv||r.art||""}`,lieg:oid,open:`ladder:${oid}|${sec}`})})));
-  return it.sort((a,b)=>a.d<b.d?-1:1);
+  return it.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:(a.k||"99")<(b.k||"99")?-1:1);
 }
 function dashHTML(){
   const ot=tickets().filter(([,t])=>OPEN_ST.includes(t.status)),tov=ot.filter(([,t])=>t.frist&&daysUntil(t.frist)<0).length;
@@ -1663,7 +1964,7 @@ function dashHTML(){
   let lad=0,ladBad=0,maengel=0;objs.forEach(o=>{["leiter","tritt"].forEach(s=>(o.rows[s]||[]).forEach(r=>{const st=ladStatus(r).state;if(st!=="out")lad++;if(["missing","over","locked"].includes(st))ladBad++}));
     SECTIONS.filter(hasZ).forEach(s=>(o.rows[s.key]||[]).forEach(r=>{if(+r.zustand>=3)maengel++}))});
   const kOut=recs("schluessel").reduce((a,[,k])=>a+keyOpen(k).length,0),kOver=recs("schluessel").reduce((a,[,k])=>a+keyOpen(k).filter(x=>x.bis&&daysUntil(x.bis)<0).length,0);
-  const mon=today().slice(0,7),hrs=recs("taetig").filter(([,r])=>(r.datum||"").startsWith(mon)).reduce((a,[,r])=>a+num(r.dauer),0);
+  const tw=recs("taetig").filter(([,t])=>t.status!=="abgesagt"&&t.status!=="erledigt"&&daysUntil(t.datum)!=null&&daysUntil(t.datum)>=0&&daysUntil(t.datum)<=7),th=tw.filter(([,t])=>daysUntil(t.datum)===0).length;
   const ag=agendaItems(),soon=ag.filter(x=>daysUntil(x.d)<=30);
   const perL=sorted().map(([id,o])=>{const t=ot.filter(([,x])=>x.lieg===id).length,w=plans.filter(([,p])=>p.lieg===id&&(()=>{const n=planNext(p);return !n||daysUntil(n)<=30})()).length;
     let m=0,l=0;SECTIONS.filter(hasZ).forEach(s=>(o.rows[s.key]||[]).forEach(r=>{if(+r.zustand>=3)m++}));["leiter","tritt"].forEach(s=>(o.rows[s]||[]).forEach(r=>{if(["missing","over","locked"].includes(ladStatus(r).state))l++}));
@@ -1671,17 +1972,17 @@ function dashHTML(){
   const tile=(l,v,sub,cls,go)=>`<button type="button" class="tile ${cls||""}" data-view="${go}"><span class="tl">${l}</span><span class="tv">${v}</span><span class="ts">${sub}</span></button>`;
   return `<section class="dash">
     <div class="mhead"><div><h1>Übersicht</h1><p class="note">${new Date().toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long",year:"numeric"})} · ${objs.size} Liegenschaften</p></div>
-      <div class="actions"><button class="btn pri" type="button" data-mact="new" data-quick="1" onclick="void 0">+ Auftrag</button></div></div>
+      <div class="actions"><button class="btn" type="button" data-mact="mailimp">Aus E-Mail</button><button class="btn pri" type="button" data-mact="new" data-quick="1">+ Auftrag</button></div></div>
     <div class="tiles">
       ${tile("Offene Aufträge",ot.length,tov?`${tov} überfällig`:"keine überfällig",tov?"crit":"","auftraege")}
       ${tile("Wartung & Prüfungen",pdue,`fällig in 30 Tagen${pmiss?` · ${pmiss} ohne Termin`:""}`,pdue||pmiss?"warn":"","wartung")}
       ${tile("Mängel aus Begehung",maengel,"Zustand 3 und 4",maengel?"warn":"","lieg")}
       ${tile("Leitern & Tritte",ladBad,`von ${lad} offen / gesperrt`,ladBad?"crit":"","lieg")}
       ${tile("Schlüssel ausgegeben",kOut,kOver?`${kOver} Rückgabe überfällig`:"keine überfällig",kOver?"crit":"","schluessel")}
-      ${tile("Stunden diesen Monat",hrs.toLocaleString("de-DE"),"aus Tätigkeitsnachweis","","taetig")}
+      ${tile("Termine nächste 7 Tage",tw.length,th?`heute: ${th}`:"heute keine","","taetig")}
     </div>
     <div class="dgrid">
-      <div class="modcard"><div class="mhead sm"><h2>Fällig in den nächsten 30 Tagen</h2></div>
+      <div class="modcard"><div class="mhead sm"><h2>Anstehend in den nächsten 30 Tagen</h2></div>
         ${soon.length?`<ul class="agenda">${soon.slice(0,14).map(x=>`<li data-open="${x.open}" tabindex="0"><span class="ad ${daysUntil(x.d)<0?"over":""}">${fmtDate(x.d)}</span><span class="at ${x.cls}">${x.type}</span><span class="al"><b>${esc(x.label)}</b><small>${esc(liegShort(x.lieg))}</small></span></li>`).join("")}</ul>${soon.length>14?`<p class="note">… und ${soon.length-14} weitere im Kalender</p>`:""}`
         :`<div class="empty">Nichts fällig. Prüftermine legst du unter „Wartung & Prüfungen“ an.</div>`}
       </div>
@@ -1703,7 +2004,7 @@ function calHTML(ag){
   return `<div class="mhead sm"><h2>${first.toLocaleDateString("de-DE",{month:"long",year:"numeric"})}</h2>
     <div class="actions"><button class="btn sm" type="button" data-mact="calprev" aria-label="Vorheriger Monat">‹</button><button class="btn sm" type="button" data-mact="calnext" aria-label="Nächster Monat">›</button></div></div>
     <div class="cal"><div class="cw">Mo</div><div class="cw">Di</div><div class="cw">Mi</div><div class="cw">Do</div><div class="cw">Fr</div><div class="cw">Sa</div><div class="cw">So</div>${cells}</div>
-    <div class="legend"><span class="ce tk">Auftrag</span><span class="ce wt">Wartung</span><span class="ce ld">Leiter / Tritt</span><span class="ce ks">Schlüssel</span></div>`;
+    <div class="legend"><span class="ce tk">Auftrag</span><span class="ce wt">Wartung</span><span class="ce ld">Leiter / Tritt</span><span class="ce ks">Schlüssel</span><span class="ce tm">Termin</span></div>`;
 }
 
 /* ---------- Datensatz bearbeiten ---------- */
@@ -1721,6 +2022,7 @@ function recField(f,r){
   else if(f.t==="lieg")inp=`<select ${a}><option value="">– keine –</option>${sorted().map(([k,o])=>`<option value="${k}"${v===k?" selected":""}>${esc((o.nr?o.nr+" ":"")+(o.name||"Ohne Namen"))}</option>`).join("")}</select>`;
   else if(f.t==="anlage"){const list=recs("anlagen").filter(([,x])=>!r.lieg||x.lieg===r.lieg);inp=`<select ${a}><option value="">– keine –</option>${list.map(([k,x])=>`<option value="${k}"${v===k?" selected":""}>${esc((x.inv?x.inv+" ":"")+(x.bez||""))}</option>`).join("")}</select>`}
   else if(f.t==="date")inp=`<input type="date" ${a} value="${esc(v)}">`;
+  else if(f.t==="time")inp=`<input type="time" ${a} value="${esc(v)}">`;
   else if(f.t==="num")inp=`<input inputmode="decimal" ${a} value="${esc(v)}" placeholder="0">`;
   else inp=`<input ${a} value="${esc(v)}" placeholder="${esc(f.ph||"")}">`;
   return `<div class="fld${f.wide?" wide":""}"><label for="${id}">${f.l}</label>${inp}</div>`;
@@ -1728,7 +2030,7 @@ function recField(f,r){
 function renderRec(){
   const {m,id}=recDlg,M=MODS[m],r=C[m].map.get(id);if(!r){closeImport();return}
   const locked=m==="auftraege"&&r.status==="erledigt";
-  const extras=m==="auftraege"?ticketExtras(r,id):m==="wartung"?planExtras(r,id):m==="anlagen"?assetExtras(r,id):m==="schluessel"?keyExtras(r,id):"";
+  const extras=m==="taetig"?termExtras(r,id):m==="auftraege"?ticketExtras(r,id):m==="wartung"?planExtras(r,id):m==="anlagen"?assetExtras(r,id):m==="schluessel"?keyExtras(r,id):"";
   $("#imp").innerHTML=`<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="rdT" style="max-width:860px">
     <div class="dlg-h"><div><h2 id="rdT">${esc(M.title(r)||(recDlg.isNew?"Neu: "+M.single:M.single))}</h2><p>${esc(M.single)}${r.nr||r.inv?" · "+esc(r.nr||r.inv):""}${r.lieg?" · "+esc(liegName(r.lieg)):""}</p></div>
       <button class="x" type="button" data-rd="close" aria-label="Schließen">×</button></div>
@@ -1738,8 +2040,8 @@ function renderRec(){
       ${M.photos&&fotosOn()?recPhotos(r):""}
       ${extras}
     </div>
-    <div class="dlg-f"><button class="btn ghost danger" type="button" data-rd="${recDlg.ui.del?"delok":"del"}">${recDlg.ui.del?"Wirklich löschen?":"Löschen"}</button>
-      <div class="actions">${recDlg.ui.del?`<button class="btn ghost" type="button" data-rd="delno">Abbrechen</button>`:""}<button class="btn pri" type="button" data-rd="close">Fertig</button></div></div></div>`;
+    <div class="dlg-f"><button class="btn ghost danger" type="button" data-rd="del">Löschen</button>
+      <div class="actions">${canSave()?`<button class="btn" type="button" data-rd="pdf">PDF</button>`:""}<button class="btn pri" type="button" data-rd="close">Fertig</button></div></div></div>`;
   hydrateImgs($("#imp"));
   document.querySelectorAll("#imp canvas[data-sig]").forEach(c=>{recDlg.ui.pads=recDlg.ui.pads||{};recDlg.ui.pads[c.dataset.sig]=makeSigPad(c,()=>recReady())});
   recReady();
@@ -1757,7 +2059,7 @@ function ticketExtras(r,id){
   if(r.status==="erledigt"&&r.abschluss){const a=r.abschluss;
     sign=`<div class="signbox done"><h3>Abgezeichnet</h3><dl class="meta"><div><dt>Erledigt am</dt><dd>${fmtDate(a.datum)}</dd></div><div><dt>Abgezeichnet von</dt><dd>${esc(a.name)}</dd></div><div><dt>Zeitpunkt</dt><dd>${new Date(a.at).toLocaleString("de-DE")}</dd></div></dl>
       ${a.bericht?`<p>${esc(a.bericht)}</p>`:""}${a.sig?(a.sig.startsWith("data:")?`<img class="sigimg" src="${a.sig}" alt="Unterschrift">`:`<img class="sigimg" data-img="${esc(a.sig)}" alt="Unterschrift">`):""}
-      <div class="actions"><button class="btn sm pri" type="button" data-rd="tdoc">Auftragsbericht speichern</button>${PRINT_OK?`<button class="btn sm" type="button" data-rd="tprint">Drucken</button>`:""}
+      <div class="actions"><button class="btn sm pri" type="button" data-rd="tdoc">Auftragsbericht PDF</button>${PRINT_OK?`<button class="btn sm" type="button" data-rd="tprint">Drucken</button>`:""}
       <button class="btn sm ghost" type="button" data-rd="${recDlg.ui.reopen?"reopenok":"reopen"}">${recDlg.ui.reopen?"Wirklich wieder öffnen?":"Wieder öffnen"}</button></div></div>`}
   else if(r.status==="storniert")sign="";
   else{let def="";try{def=JSON.parse(localStorage.getItem("begehung-pruefer")||"{}").pruefer||""}catch(e){}
@@ -1767,7 +2069,13 @@ function ticketExtras(r,id){
       <div class="fld wide"><label for="sg-ber">Erledigungsbericht</label><textarea id="sg-ber" placeholder="Was wurde gemacht? Material, Hinweise …"></textarea></div></div>
       <div class="sigwrap"><span class="lbl">Unterschrift</span><canvas class="sigpad" data-sig="done"></canvas><div class="actions"><button class="btn sm ghost" type="button" data-rd="sigclear" data-k="done">Unterschrift löschen</button></div></div>
       <div class="actions" style="justify-content:space-between"><span class="note" id="sgHint"></span><button class="btn pri" type="button" data-rd="sign" id="sgBtn" disabled>Abzeichnen</button></div></div>`}
+  const orig=r.mail?`<details class="origmail"><summary>Original-E-Mail anzeigen</summary><pre>${esc(r.mail)}</pre></details>`:"";
+  sign=sign+orig;
   return `${plan?`<div class="lock">Aus Wartungsplan: <a href="#" data-rd="goto" data-to="wartung:${r.planId}">${esc(plan.bez)}</a>. Beim Abzeichnen wird die Durchführung dort eingetragen.</div>`:""}${sign}${logHTML(r)}`;
+}
+function termExtras(r,id){
+  return `<div class="mailbox"><div><b>In den Kalender übernehmen</b><small>Erstellt eine Kalenderdatei (.ics) für iPhone, iPad oder Outlook.</small></div><div class="actions"><button class="btn sm pri" type="button" data-rd="ics">Kalenderdatei</button></div></div>
+    ${r.mail?`<details class="origmail"><summary>Original anzeigen (${esc(r.quelle||"E-Mail")})</summary><pre>${esc(r.mail)}</pre></details>`:""}`;
 }
 function planExtras(r,id){
   const n=planNext(r),open=openTicketFor("planId",id),all=tickets().filter(([,t])=>t.planId===id);
@@ -1792,7 +2100,7 @@ function keyExtras(r,id){
   return `<div class="fld wide"><span class="lbl">Ausgaben · ${av} von ${num(r.anzahl)} verfügbar</span>
    ${aus.length?`<div class="tw"><table class="mt"><thead><tr><th>Empfänger</th><th>Anzahl</th><th>Ausgabe</th><th>Rückgabe bis</th><th>Zurück am</th><th></th></tr></thead><tbody>
    ${aus.map(a=>`<tr><td><b>${esc(a.an)}</b><small>${esc(a.firma||"")}</small></td><td class="mono">${num(a.anz||1)}</td><td class="mono">${fmtDate(a.datum)}</td><td>${a.zur?`<span class="mono">${fmtDate(a.bis)||"–"}</span>`:dueChip(a.bis,"offen")}</td><td class="mono">${a.zur?fmtDate(a.zur.datum):"–"}</td>
-     <td><div class="actions" style="flex-wrap:nowrap">${a.zur?"":`<button class="btn sm" type="button" data-rd="kret" data-id="${a.id}">Rückgabe</button>`}<button class="btn sm ghost" type="button" data-rd="kdoc" data-id="${a.id}">Quittung</button></div></td></tr>`).join("")}</tbody></table></div>`:`<p class="note">Noch nicht ausgegeben.</p>`}</div>
+     <td><div class="actions" style="flex-wrap:nowrap">${a.zur?"":`<button class="btn sm" type="button" data-rd="kret" data-id="${a.id}">Rückgabe</button>`}<button class="btn sm ghost" type="button" data-rd="kdoc" data-id="${a.id}">Quittung PDF</button></div></td></tr>`).join("")}</tbody></table></div>`:`<p class="note">Noch nicht ausgegeben.</p>`}</div>
    <div class="signbox"><h3>Schlüssel ausgeben</h3><div class="form plain">
      <div class="fld"><label for="ka-an">Empfänger</label><input id="ka-an" placeholder="Vor- und Nachname"></div>
      <div class="fld"><label for="ka-firma">Funktion / Firma</label><input id="ka-firma" placeholder="z. B. Reinigungsfirma"></div>
@@ -1826,40 +2134,47 @@ async function recClick(e){
   const b=e.target.closest("[data-rd]");if(!b)return;const a=b.dataset.rd;const {m,id}=recDlg;const r=C[m].map.get(id);if(!r)return closeImport();
   if(b.tagName==="A")e.preventDefault();
   if(a==="close")return closeImport();
-  if(a==="del"){recDlg.ui.del=true;return renderRec()}
+  if(a==="del"){const M=MODS[m],info=recInfo(m,id,r),out=m==="schluessel"?keyOut(r):0;
+    return confirmDelete({title:M.single,label:info.label,lines:[info.liegName,m==="auftraege"?`Status: ${A_STATUS[r.status]?.[0]||r.status||""}`:""],
+      warn:m==="auftraege"&&r.status==="erledigt"?"Dieser Auftrag ist bereits abgezeichnet.":out?`Von diesem Schlüssel sind noch ${out} Exemplar${out>1?"e":""} ausgegeben.`:"",
+      onConfirm:grund=>{const snap=clone(C[m].map.get(id)||r);cRemove(m,id);histAdd(Object.assign({act:"gelöscht",grund,snap:{type:"rec",m,id,data:snap}},info));
+        recDlg=null;$("#imp").hidden=true;$("#imp").innerHTML="";afterRec();setSave("ok","Gelöscht, Kopie in der Historie")}})}
   if(a==="delno"){recDlg.ui.del=false;return renderRec()}
   if(a==="delok"){walkMedia(r,(t,o,k)=>{if(t==="foto")o[k].forEach(f=>IMG.del(f.id));else if(!o[k].startsWith("data:"))IMG.del(o[k])});cRemove(m,id);recDlg=null;$("#imp").hidden=true;$("#imp").innerHTML="";afterRec();return}
   if(a==="goto"){const [mm,ii]=b.dataset.to.split(":");finishNew();return openRec(mm,ii)}
   if(a==="foto"){recDlg.ui.fview=b.dataset.id;return renderRec()}
   if(a==="fclose"){recDlg.ui.fview=null;return renderRec()}
   if(a==="fdel"){recDlg.ui.fdel=b.dataset.id;return renderRec()}
-  if(a==="fdelok"){r.fotos=(r.fotos||[]).filter(f=>f.id!==b.dataset.id);IMG.del(b.dataset.id);recDlg.ui.fdel=null;cTouch(m,id);return renderRec()}
+  if(a==="fdelok"){r.fotos=(r.fotos||[]).filter(f=>f.id!==b.dataset.id);IMG.del(b.dataset.id);recDlg.ui.fdel=null;cTouch(m,id);histAdd(Object.assign({act:"Foto gelöscht"},recInfo(m,id,r)));return renderRec()}
   if(a==="sigclear"){const p=recDlg.ui.pads&&recDlg.ui.pads[b.dataset.k];if(p)p.clear();return}
+  if(a==="ics"){if(!r.uid){r.uid=rid();cTouch(m,id)}try{await saveFile(`Termin ${fmtDate(r.datum)} ${MODS.taetig.title(r)}`.replace(/[\\/:*?"<>|]/g,"-").slice(0,80)+".ics",icsFor(r),"text/calendar");setSave("ok","Kalenderdatei erstellt")}catch(e){}return}
   if(a==="log"){const v=($("#logIn").value||"").trim();if(!v)return;addLog(r,v);cTouch(m,id);return renderRec()}
   if(a==="sign"){b.disabled=true;b.textContent="Wird gespeichert …";
     const sig=await storeSig(recDlg.ui.pads.done),name=$("#sg-name").value.trim(),datum=$("#sg-datum").value,bericht=$("#sg-ber").value.trim();
     r.abschluss={datum,name,bericht,sig,at:Date.now()};r.status="erledigt";addLog(r,`Erledigt und abgezeichnet von ${name}`);cTouch(m,id);
+    histAdd(Object.assign({act:"abgezeichnet",note:`von ${name}, erledigt am ${fmtDate(datum)}`},recInfo(m,id,r)));
     try{const pv=JSON.parse(localStorage.getItem("begehung-pruefer")||"{}");pv.pruefer=name;localStorage.setItem("begehung-pruefer",JSON.stringify(pv))}catch(e){}
     if(r.planId&&C.wartung.map.has(r.planId)){const p=C.wartung.map.get(r.planId);p.hist=(p.hist||[]).concat({datum,von:r.zust||name,bem:bericht,auftrag:r.nr});if(!p.letzte||datum>p.letzte)p.letzte=datum;cTouch("wartung",r.planId)}
     recDlg.ui={};return renderRec()}
   if(a==="reopen"){recDlg.ui.reopen=true;return renderRec()}
-  if(a==="reopenok"){r.status="arbeit";addLog(r,"Wieder geöffnet (vorherige Abzeichnung: "+(r.abschluss?.name||"")+", "+fmtDate(r.abschluss?.datum)+")");r.abschlussAlt=(r.abschlussAlt||[]).concat(r.abschluss||[]);delete r.abschluss;recDlg.ui={};cTouch(m,id);return renderRec()}
-  if(a==="tdoc"||a==="tprint"){const html=await ticketDoc(r);return a==="tprint"?printHTML(html):saveFile(`Auftrag ${r.nr}.html`,html,"text/html").catch(()=>{})}
+  if(a==="reopenok"){histAdd(Object.assign({act:"wieder geöffnet",note:`vorher abgezeichnet von ${r.abschluss?.name||"–"}`},recInfo(m,id,r)));r.status="arbeit";addLog(r,"Wieder geöffnet (vorherige Abzeichnung: "+(r.abschluss?.name||"")+", "+fmtDate(r.abschluss?.datum)+")");r.abschlussAlt=(r.abschlussAlt||[]).concat(r.abschluss||[]);delete r.abschluss;recDlg.ui={};cTouch(m,id);return renderRec()}
+  if(a==="pdf"||a==="tdoc"||a==="tprint"){const M=MODS[m];return outDoc([await recModel(m,id,r)],`${M.single} ${r.nr||r.inv||M.title(r)||""}`.trim(),a==="tprint"?"print":"pdf")}
   if(a==="hist"){const datum=$("#hx-datum").value;if(!datum)return;r.hist=(r.hist||[]).concat({datum,von:$("#hx-von").value.trim(),bem:$("#hx-bem").value.trim()});if(!r.letzte||datum>r.letzte)r.letzte=datum;cTouch(m,id);return renderRec()}
   if(a==="mkticket"){const tid=createTicket({titel:r.bez,lieg:r.lieg,anlage:r.anlage||"",kat:r.kat||"",zust:r.dienst||"",frist:planNext(r)||"",planId:id,quelle:"Wartungsplan"},"Aus Wartungsplan angelegt");r.lastGen=planNext(r);cTouch(m,id);return openRec("auftraege",tid)}
   if(a==="assetticket"){finishNew();const tid=createTicket({lieg:r.lieg,anlage:id,kat:r.kat==="Elektro"?"Elektro":"",ort:r.ort||""},"Auftrag angelegt");return openRec("auftraege",tid,true)}
   if(a==="assetplan"){finishNew();return newRec("wartung",{lieg:r.lieg,anlage:id,bez:r.bez?"Wartung "+r.bez:""})}
   if(a==="kout"){b.disabled=true;const sig=await storeSig(recDlg.ui.pads.key);
     r.ausgaben=(r.ausgaben||[]).concat({id:"k"+rid(),an:$("#ka-an").value.trim(),firma:$("#ka-firma").value.trim(),anz:$("#ka-anz").value||"1",datum:$("#ka-datum").value||today(),bis:$("#ka-bis").value,sig,at:Date.now()});
-    cTouch(m,id);recDlg.ui={};return renderRec()}
-  if(a==="kret"){const x=(r.ausgaben||[]).find(z=>z.id===b.dataset.id);if(x){x.zur={datum:today(),at:Date.now()};cTouch(m,id)}return renderRec()}
-  if(a==="kdoc"){const x=(r.ausgaben||[]).find(z=>z.id===b.dataset.id);if(!x)return;const html=await keyDoc(r,x);return PRINT_OK?printHTML(html):saveFile(`Schlüsselquittung ${r.nr||""} ${x.an}.html`.replace(/[\\/:*?"<>|]/g,"-"),html,"text/html").catch(()=>{})}
+    cTouch(m,id);histAdd(Object.assign({act:"Schlüssel ausgegeben",note:`an ${r.ausgaben[r.ausgaben.length-1].an}`},recInfo(m,id,r)));recDlg.ui={};return renderRec()}
+  if(a==="kret"){const x=(r.ausgaben||[]).find(z=>z.id===b.dataset.id);if(x){x.zur={datum:today(),at:Date.now()};cTouch(m,id);histAdd(Object.assign({act:"Schlüssel zurück",note:`von ${x.an}`},recInfo(m,id,r)))}return renderRec()}
+  if(a==="kdoc"){const x=(r.ausgaben||[]).find(z=>z.id===b.dataset.id);if(!x)return;return outDoc([await keyModel(r,x)],`Schlüsselquittung ${r.nr||""} ${x.an}`,"pdf")}
 }
 function recInput(e){
   const t=e.target;if(!recDlg)return;
   if(t.id==="rdFoto"&&e.type==="change"){recAddFotos([...t.files]);return}
   if(t.dataset.rf){const {m,id}=recDlg,r=C[m].map.get(id);if(!r)return;let v=t.value;if(r[t.dataset.rf]===v)return;
     const old=r[t.dataset.rf];r[t.dataset.rf]=v;
+    {const fl=MODS[m].fields.find(f=>f.k===t.dataset.rf);histEdit("rec:"+m+":"+id,recInfo(m,id,r),fl?fl.l:t.dataset.rf,recDlg.isNew?"angelegt":"geändert")}
     if(m==="auftraege"&&t.dataset.rf==="status")addLog(r,`Status: ${A_STATUS[old]?.[0]||old||"–"} → ${A_STATUS[v]?.[0]||v}`);
     if(m==="auftraege"&&t.dataset.rf==="zust"&&e.type==="change")addLog(r,`Zuständig: ${v||"–"}`);
     cTouch(m,id);
@@ -1869,7 +2184,7 @@ function recInput(e){
   recReady();
 }
 async function recAddFotos(files){const {m,id}=recDlg;recDlg.ui.fbusy=true;renderRec();
-  for(const f of files){try{const fid=await IMG.add(f);const r=C[m].map.get(id);if(r){r.fotos=(r.fotos||[]).concat({id:fid,t:Date.now()});cTouch(m,id)}}catch(e){}}
+  for(const f of files){try{const fid=await IMG.add(f);const r=C[m].map.get(id);if(r){r.fotos=(r.fotos||[]).concat({id:fid,t:Date.now()});cTouch(m,id);histEdit("rec:"+m+":"+id,recInfo(m,id,r),"Fotos")}}catch(e){}}
   if(recDlg&&recDlg.id===id){recDlg.ui.fbusy=false;renderRec()}}
 function finishNew(){if(!recDlg)return;const {m,id,isNew}=recDlg,r=C[m].map.get(id);
   if(isNew&&r&&!MODS[m].title(r)&&!(r.fotos||[]).length&&!(r.ausgaben||[]).length)cRemove(m,id)}
@@ -1909,8 +2224,236 @@ function renderTpl(){
 function tplClick(e){const b=e.target.closest("[data-tp]");if(!b)return;if(b.dataset.tp==="close"){tplState=null;return closeImport()}
   const ids=tplState.lieg?[tplState.lieg]:sorted().map(([k])=>k);let c=0;
   Object.keys(tplState.sel).filter(i=>tplState.sel[i]).forEach(i=>{const t=TPL[i];ids.forEach(lid=>{const id=newRecId("wartung");C.wartung.map.set(id,Object.assign(MODS.wartung.defaults(),{bez:t[0],kat:t[1],intervall:t[2],grundlage:t[3],lieg:lid,auto:"ja"}));cTouch("wartung",id);c++})});
+  if(c)histAdd({act:"angelegt",area:MODS.wartung.label,label:`${c} Wartungspläne aus Vorlagen`,lieg:tplState.lieg||"",liegName:tplState.lieg?liegName(tplState.lieg):"alle Liegenschaften"});
   tplState=null;closeImport();setSave("ok",`${c} Wartungspläne angelegt. Trage jeweils das Datum der letzten Durchführung ein.`);renderMod()}
 function tplInput(e){const t=e.target;if(t.dataset.tpi!=null){tplState.sel[t.dataset.tpi]=t.checked;renderTpl()}else if(t.id==="tpLieg"){tplState.lieg=t.value;renderTpl()}}
+
+/* ---------- Auftrag aus E-Mail ---------- */
+const normTxt=s=>String(s||"").toLowerCase().replace(/ß/g,"ss").replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue")
+  .replace(/stra(ss)?e\b|str\./g,"str").replace(/[^a-z0-9]+/g," ").trim();
+const NAME_STOP=new Set(["ev","evangelisch","evangelische","evangelischer","kindergarten","kita","kindertagesstaette","familienzentrum","nrw","der","die","das","und","fuer"]);
+function parseDateDe(s){
+  if(!s)return "";let m=/(\d{1,2})\.(\d{1,2})\.(\d{2,4})/.exec(s);
+  if(m){let y=+m[3];if(y<100)y+=2000;return `${y}-${String(m[2]).padStart(2,"0")}-${String(m[1]).padStart(2,"0")}`}
+  const MON={jan:1,feb:2,mae:3,mar:3,apr:4,mai:5,may:5,jun:6,jul:7,aug:8,sep:9,okt:10,oct:10,nov:11,dez:12,dec:12};
+  const mo=w=>MON[normTxt(w).slice(0,3)];
+  m=/(\d{1,2})\.?\s+([A-Za-zÄÖÜäöü]+)\.?\s+(\d{4})/.exec(s);if(m&&mo(m[2]))return `${m[3]}-${String(mo(m[2])).padStart(2,"0")}-${String(m[1]).padStart(2,"0")}`;
+  m=/([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})/.exec(s);if(m&&mo(m[1]))return `${m[3]}-${String(mo(m[1])).padStart(2,"0")}-${String(m[2]).padStart(2,"0")}`;
+  m=/(\d{4})-(\d{2})-(\d{2})/.exec(s);return m?m[0]:"";
+}
+function guessLieg(text){
+  const T=" "+normTxt(text)+" ",res=[];
+  objs.forEach((o,id)=>{let sc=0;const why=[];
+    const words=normTxt(o.name).split(" ").filter(w=>w.length>2&&!NAME_STOP.has(w)),nm=words.join(" ");
+    if(nm&&T.includes(" "+nm+" ")){sc+=6;why.push("Name")}else{const k=words.filter(w=>T.includes(" "+w+" ")).length;if(k){sc+=k*3;why.push("Name")}}
+    const m=/^(.*?)(\s+\d+\s*\w?)?,\s*(\d{5})\s+(.+)$/.exec(o.adresse||"");
+    if(m){const st=normTxt(m[1]);if(st.length>3&&T.includes(" "+st+" ")){sc+=6;why.push("Straße")}
+      if(T.includes(" "+m[3]+" ")){sc+=2;why.push("PLZ")}
+      const ort=normTxt(m[4]);if(T.includes(" "+ort+" ")){sc+=3;why.push("Ort")}else if(ort.split(" ").some(p=>p.length>3&&T.includes(" "+p+" ")))sc+=1}
+    if(o.nr&&new RegExp("(nr|nummer|objekt|liegenschaft) ?0*"+String(+o.nr)+" ").test(T)){sc+=6;why.push("Nummer")}
+    if(sc)res.push({id,sc,why:[...new Set(why)]})});
+  res.sort((a,b)=>b.sc-a.sc);
+  const top=res[0],ok=top&&top.sc>=4&&(!res[1]||top.sc>res[1].sc);
+  return {id:ok?top.id:"",why:ok?top.why:[],cands:res.slice(0,4)};
+}
+const KAT_KW=[["Elektro",["~strom","licht","~lampe","~leucht","~steckdose","sicherung","~schalter","kabel","elektr","birne","fi ","fehlerstrom"]],
+  ["Sanitär",["wc","toilette","klo","wasserhahn","armatur","abfluss","verstopf","spuel","waschbecken","undicht","tropf","rohr","dusche","urinal","wasserschaden","siphon"]],
+  ["Heizung / Lüftung",["heizung","heizkoerper","thermostat","therme","brenner","warmwasser","lueftung","klima","kalt"]],
+  ["Brandschutz",["rauchmelder","feuerloescher","brandschutz","notausgang","fluchtweg","brandmelde","rwa"]],
+  ["Bau / Dach",["dach","riss","putz","fliese","bodenbelag","schimmel","feucht","decke","wand","dachrinne","regenrinne"]],
+  ["Fenster / Türen",["fenster","tuer","tor ","scheibe","glas","rollo","jalousie","rolllade","griff"]],
+  ["Außenanlagen / Spielplatz",["spielplatz","schaukel","rutsche","sandkasten","klettergeruest","zaun","garten","baum","hecke","rasen","laub","schnee","glaette","pflaster","aussengelaende"]],
+  ["Reinigung",["reinigung","verschmutz","dreck","muell"]],
+  ["Schlösser / Schlüssel",["schluessel","schloss","zylinder","schliessanlage","ausgesperrt"]]];
+function guessKat(text){const T=" "+normTxt(text)+" ";let best="",bs=0;
+  KAT_KW.forEach(([k,kws])=>{const sc=kws.filter(w=>w[0]==="~"?T.includes(w.slice(1)):T.includes(" "+w)).length;if(sc>bs){bs=sc;best=k}});return best}
+function guessPrio(text){const T=" "+normTxt(text)+" ",has=a=>a.some(k=>T.includes(" "+k));
+  if(has(["nicht dringend","nicht eilig","bei gelegenheit","irgendwann","keine eile"]))return "niedrig";
+  if(has(["dringend","sofort","notfall","gefahr","eilt","asap","umgehend","wasserschaden","stromausfall","verletz","rohrbruch","brandgeruch"]))return "dringend";
+  if(has(["zeitnah","wichtig","schnellstmoeglich","schnell","bald"]))return "hoch";return "normal"}
+function guessOrt(text){const m=/(?:^|[\s,.(])((?:gruppenraum|gruppe)\s*\d*|raum\s+[\w.\-]+|küche|turnhalle|bewegungsraum|mehrzweckraum|keller|flur|eingangsbereich|eingang|büro|waschraum|sanitärraum|wickelraum|schlafraum|personalraum|personal-wc|außengelände|garten|dachboden|treppenhaus|heizungsraum|hausmeisterraum|abstellraum|mensa|speiseraum)(?=$|[\s,.;:!?)])/i.exec(text||"");
+  if(!m)return "";const v=m[1].trim();return v.charAt(0).toUpperCase()+v.slice(1)}
+function addDays(n){const d=new Date();d.setDate(d.getDate()+n);return ISO(d)}
+const PRIO_FRIST={dringend:1,hoch:3,normal:14,niedrig:30};
+function parseMail(raw){
+  const t=String(raw||"").replace(/\r/g,"").replace(/ /g," "),lines=t.split("\n");
+  const H=[["from",/^(von|from|absender)\s*:\s*(.*)$/i],["subj",/^(betreff|subject)\s*:\s*(.*)$/i],["date",/^(datum|date|gesendet|sent)\s*:\s*(.*)$/i],["to",/^(an|to|cc|kopie|bcc)\s*:\s*(.*)$/i]];
+  const blocks=[];let cur=null;
+  lines.forEach((l,i)=>{const s=l.trim();for(const [k,re] of H){const m=re.exec(s);if(m){if(!cur||cur.end<i-2){cur={start:i,end:i,h:{}};blocks.push(cur)}cur.end=i;if(!(k in cur.h))cur.h[k]=m[2].trim();break}}});
+  const hb=blocks.filter(b=>b.h.from||b.h.subj),isQuote=l=>/^-{2,}\s*(ursprüngliche nachricht|original message|weitergeleitete nachricht|forwarded message|anfang der weitergeleiteten)/i.test(l)||/^(am|on)\s.{4,}(schrieb|wrote)/i.test(l);
+  const bodyOf=(b,next)=>{let end=next?next.start:lines.length;for(let i=b?b.end+1:0;i<end;i++)if(isQuote(lines[i].trim())){end=i;break}return lines.slice(b?b.end+1:0,end).join("\n").trim()};
+  let blk=hb[0]||null,body=bodyOf(blk,hb[1]);
+  if(blk&&hb[1]&&body.replace(/\s/g,"").length<15){blk=hb[1];body=bodyOf(blk,hb[2])}
+  let subj=((blk&&blk.h.subj)||"").replace(/^((aw|wg|re|fw|fwd|wtr|antw)\s*:\s*)+/i,"").trim();
+  const from=(blk&&blk.h.from)||"",mail=((/<([^>]+)>/.exec(from)||/([^\s<>"]+@[^\s<>"]+)/.exec(from)||[])[1]||"");
+  let name=from.replace(/<[^>]*>/g,"").replace(/["']/g,"").replace(mail,"").replace(/\[mailto:[^\]]*\]/i,"").trim();
+  let desc=body;const g=/^\s*(mit freundlichen gr(ü|ue)(ß|ss)en|freundliche gr(ü|ue)(ß|ss)e|viele gr(ü|ue)(ß|ss)e|liebe gr(ü|ue)(ß|ss)e|beste gr(ü|ue)(ß|ss)e|herzliche gr(ü|ue)(ß|ss)e|mfg|lg|vg|gru(ß|ss))\b/im.exec(desc);
+  if(g&&g.index>0)desc=desc.slice(0,g.index).trim();
+  desc=desc.replace(/^\s*(hallo|guten (morgen|tag|abend)|moin|liebe[rs]?\s|sehr geehrte[rs]?)[^\n]*\n+/i,"").trim();
+  if(!subj){const line=(desc.split("\n").find(x=>x.trim())||"").trim(),first=(line.match(/^.*?[.!?](?=\s|$)/)||[line])[0];subj=first.length>90?first.slice(0,87)+"…":first}
+  const full=subj+"\n"+body,prio=guessPrio(full);
+  return {titel:subj,gemeldet:[name,mail?`(${mail})`:""].filter(Boolean).join(" ")||"",erstellt:parseDateDe((blk&&blk.h.date)||"")||today(),
+    text:desc.slice(0,3000),raw:t.slice(0,20000),lieg:guessLieg(full),kat:guessKat(full),prio,ort:guessOrt(body||full),frist:addDays(PRIO_FRIST[prio]||14),headers:!!blk};
+}
+let mailImp=null;
+function openMailImp(){mailImp={raw:"",p:null,f:null};$("#imp").hidden=false;renderMailImp();setTimeout(()=>{const t=$("#miRaw");if(t)t.focus()},30)}
+function renderMailImp(){
+  const st=mailImp,p=st.p,f=st.f;
+  let body;
+  if(!p){body=`<div class="fld"><label for="miRaw">E-Mail hier einfügen</label><textarea id="miRaw" class="miraw" placeholder="Von: Kita Senfkorn &lt;leitung@…&gt;&#10;Betreff: Lampe im Gruppenraum 2 defekt&#10;&#10;Hallo, im Gruppenraum 2 ist die Deckenleuchte ausgefallen …">${esc(st.raw)}</textarea></div>
+    <div class="lock" style="display:block">Am besten die ganze Mail mit „Von“ und „Betreff“ kopieren. Am PC: Mail öffnen, Strg+A, Strg+C. Auf iPhone und iPad: in den Text tippen und halten, „Alles auswählen“, „Kopieren“. Weitergeleitete Mails funktionieren auch.</div>`}
+  else{const L=p.lieg,lo=L.id?objs.get(L.id):null;
+    body=`<div class="mi-found">
+      ${L.id?`<span class="stp st-ok">Liegenschaft erkannt</span><span class="note">anhand ${esc(L.why.join(", "))}</span>`:`<span class="stp st-wartet">Liegenschaft nicht eindeutig</span><span class="note">bitte auswählen${L.cands.length?":":""}</span>${L.cands.slice(0,3).map(c=>`<button class="btn sm" type="button" data-mi="pick" data-id="${c.id}">${esc(liegShort(c.id))}</button>`).join("")}`}
+      ${p.kat?`<span class="stp st-offen">Gewerk: ${esc(p.kat)}</span>`:""}<span class="stp ${PRIO[p.prio]||""}">Priorität: ${esc(p.prio)}</span>${p.ort?`<span class="stp st-offen">Ort: ${esc(p.ort)}</span>`:""}
+      ${p.headers?"":`<span class="note">Kein „Von/Betreff“ gefunden. Titel aus dem ersten Satz.</span>`}</div>
+    <div class="form plain">
+      <div class="fld wide"><label for="mi-titel">Titel</label><input id="mi-titel" data-mf="titel" value="${esc(f.titel)}"></div>
+      <div class="fld"><label for="mi-lieg">Liegenschaft</label><select id="mi-lieg" data-mf="lieg"><option value="">– bitte wählen –</option>${sorted().map(([k,o])=>`<option value="${k}"${f.lieg===k?" selected":""}>${esc((o.nr?o.nr+" ":"")+(o.name||""))}</option>`).join("")}</select></div>
+      <div class="fld"><label for="mi-ort">Ort im Gebäude</label><input id="mi-ort" data-mf="ort" value="${esc(f.ort)}"></div>
+      <div class="fld"><label for="mi-kat">Gewerk</label><select id="mi-kat" data-mf="kat">${["",...GEWERKE].map(x=>`<option value="${esc(x)}"${f.kat===x?" selected":""}>${esc(x||"–")}</option>`).join("")}</select></div>
+      <div class="fld"><label for="mi-prio">Priorität</label><select id="mi-prio" data-mf="prio">${Object.keys(PRIO).map(x=>`<option${f.prio===x?" selected":""}>${x}</option>`).join("")}</select></div>
+      <div class="fld"><label for="mi-gemeldet">Gemeldet von</label><input id="mi-gemeldet" data-mf="gemeldet" value="${esc(f.gemeldet)}"></div>
+      <div class="fld"><label for="mi-erstellt">Eingegangen am</label><input type="date" id="mi-erstellt" data-mf="erstellt" value="${esc(f.erstellt)}"></div>
+      <div class="fld"><label for="mi-frist">Erledigen bis</label><input type="date" id="mi-frist" data-mf="frist" value="${esc(f.frist)}"></div>
+      <div class="fld wide"><label for="mi-text">Beschreibung</label><textarea id="mi-text" data-mf="text">${esc(f.text)}</textarea></div>
+    </div>
+    <details class="origmail"><summary>Original-E-Mail anzeigen</summary><pre>${esc(p.raw)}</pre></details>`}
+  $("#imp").innerHTML=`<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="miT" style="max-width:820px">
+    <div class="dlg-h"><div><h2 id="miT">Auftrag aus E-Mail</h2><p>${p?"Vorschläge prüfen und Auftrag anlegen. Die Original-Mail wird im Auftrag gespeichert.":"E-Mail einfügen. Die App erkennt Betreff, Absender, Liegenschaft, Gewerk und Priorität."}</p></div>
+      <button class="x" type="button" data-mi="close" aria-label="Schließen">×</button></div>
+    <div class="dlg-b">${body}</div>
+    <div class="dlg-f">${p?`<button class="btn ghost" type="button" data-mi="reset">Andere E-Mail</button>`:`<span></span>`}
+      <div class="actions"><button class="btn" type="button" data-mi="close">Abbrechen</button>${p?`<button class="btn pri" type="button" data-mi="go"${f.titel.trim()?"":" disabled"}>Auftrag anlegen</button>`:`<button class="btn pri" type="button" data-mi="parse"${st.raw.trim()?"":" disabled"}>Erkennen</button>`}</div></div></div>`;
+}
+function mailParse(){const st=mailImp;if(!st.raw.trim())return;st.p=parseMail(st.raw);
+  st.f={titel:st.p.titel,lieg:st.p.lieg.id,ort:st.p.ort,kat:st.p.kat,prio:st.p.prio,gemeldet:st.p.gemeldet,erstellt:st.p.erstellt,frist:st.p.frist,text:st.p.text};renderMailImp()}
+function mailClick(e){const b=e.target.closest("[data-mi]");if(!b)return;const a=b.dataset.mi,st=mailImp;
+  if(a==="close")return closeImport();
+  if(a==="parse")return mailParse();
+  if(a==="reset"){st.p=null;st.f=null;st.raw="";renderMailImp();return}
+  if(a==="pick"){st.f.lieg=b.dataset.id;st.p.lieg={id:b.dataset.id,why:["Auswahl"],cands:st.p.lieg.cands};return renderMailImp()}
+  if(a==="go"){const f=st.f;if(!f.titel.trim())return;
+    const id=createTicket({titel:f.titel.trim(),lieg:f.lieg,ort:f.ort,kat:f.kat,prio:f.prio,gemeldet:f.gemeldet,erstellt:f.erstellt||today(),frist:f.frist,text:f.text,quelle:"E-Mail",mail:st.p.raw},"Aus E-Mail angelegt");
+    mailImp=null;$("#imp").hidden=true;$("#imp").innerHTML="";renderNav();openRec("auftraege",id);setSave("ok","Auftrag aus E-Mail angelegt")}
+}
+function mailInput(e){const t=e.target,st=mailImp;
+  if(t.id==="miRaw"){st.raw=t.value;const b=document.querySelector('[data-mi="parse"]');if(b)b.disabled=!st.raw.trim();return}
+  if(t.dataset.mf&&st.f){st.f[t.dataset.mf]=t.value;if(t.dataset.mf==="prio"&&e.type==="change"){st.f.frist=addDays(PRIO_FRIST[t.value]||14);const fr=$("#mi-frist");if(fr)fr.value=st.f.frist}
+    if(t.dataset.mf==="titel"){const g=document.querySelector('[data-mi="go"]');if(g)g.disabled=!t.value.trim()}}
+}
+
+/* ---------- Termine: Hilfsfunktionen, Import aus E-Mail / Kalendereinladung, Kalender-Export ---------- */
+const WT=["So","Mo","Di","Mi","Do","Fr","Sa"];
+function dayLabel(iso){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||"");if(!m)return "";return WT[new Date(+m[1],+m[2]-1,+m[3]).getDay()]+" "+fmtDate(iso)}
+const tZeit=r=>[r.zeit,r.bis].filter(Boolean).join("–")||"ganztägig";
+const tKey=r=>(r.datum||"")+(r.zeit||"00:00");
+function guessArt(text){const T=" "+normTxt(text)+" ",h=a=>a.some(k=>T.includes(" "+k));
+  if(h(["einweisung","unterweisung","sicherheitseinweisung"]))return "Einweisung Fremdfirma";
+  if(h(["abnahme"]))return "Abnahme";
+  if(h(["wartung","pruefung","inspektion","messung"]))return "Wartung / Prüfung";
+  if(h(["begehung","ortstermin","besichtigung"]))return "Begehung";
+  if(h(["besprechung","meeting","abstimmung","jour fixe"]))return "Besprechung";
+  if(h(["handwerker","monteur","reparatur","montage","austausch","einbau"]))return "Handwerkertermin";
+  return "Sonstiges"}
+function findDate(text){
+  const s=String(text||""),now=new Date(),y0=now.getFullYear();
+  const fix=(y,mo,d)=>{let yy=y?(+y<100?2000+ +y:+y):y0;let dt=new Date(yy,mo-1,d);if(!y&&dt<new Date(y0,now.getMonth(),now.getDate()-30))dt=new Date(yy+1,mo-1,d);return ISO(dt)};
+  let m=/(\d{1,2})\.(\d{1,2})\.(\d{2,4})?(?!\d)/.exec(s);if(m&&+m[2]>=1&&+m[2]<=12&&+m[1]>=1&&+m[1]<=31)return fix(m[3],+m[2],+m[1]);
+  const MON={jan:1,feb:2,mae:3,mar:3,apr:4,mai:5,jun:6,jul:7,aug:8,sep:9,okt:10,nov:11,dez:12};
+  m=/(\d{1,2})\.\s*(Januar|Februar|März|Maerz|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember|Jan|Feb|Mär|Apr|Jun|Jul|Aug|Sep|Sept|Okt|Nov|Dez)\.?\s*(\d{4})?/i.exec(s);
+  if(m){const mo=MON[normTxt(m[2]).slice(0,3)];if(mo)return fix(m[3],mo,+m[1])}
+  const T=" "+normTxt(s)+" ";if(T.includes(" uebermorgen "))return ISO(new Date(y0,now.getMonth(),now.getDate()+2));if(T.includes(" morgen "))return ISO(new Date(y0,now.getMonth(),now.getDate()+1));
+  return "";
+}
+function findTimes(text){
+  const s=String(text||"").replace(/\d{1,2}\.\d{1,2}\.(\d{2,4})?/g," ");const t=x=>{const m=/^(\d{1,2})(?:[:.](\d{2}))?$/.exec(x);if(!m||+m[1]>23)return "";return String(m[1]).padStart(2,"0")+":"+(m[2]||"00")};
+  let m=/(?:von\s+)?(\d{1,2}(?:[:.]\d{2})?)\s*(?:uhr\s*)?(?:-|–|bis)\s*(\d{1,2}(?:[:.]\d{2})?)\s*uhr/i.exec(s)||/(\d{1,2}[:.]\d{2})\s*(?:uhr\s*)?(?:-|–|bis)\s*(\d{1,2}[:.]\d{2})/i.exec(s);
+  if(m&&t(m[1])&&t(m[2]))return [t(m[1]),t(m[2])];
+  m=/(?:um|ab|gegen)?\s*(\d{1,2}[:.]\d{2})\s*(?:uhr)?/i.exec(s)||/(\d{1,2})\s*uhr/i.exec(s);
+  return m&&t(m[1])?[t(m[1]),""]:["",""];
+}
+function parseICS(raw){
+  const lines=String(raw).replace(/\r/g,"").replace(/\n[ \t]/g,"").split("\n");let inEv=false;const ev={};
+  for(const l of lines){if(/^BEGIN:VEVENT/i.test(l)){inEv=true;continue}if(/^END:VEVENT/i.test(l))break;if(!inEv)continue;
+    const i=l.indexOf(":");if(i<0)continue;const key=l.slice(0,i),val=l.slice(i+1),name=key.split(";")[0].toUpperCase();if(!(name in ev))ev[name]={key,val}}
+  const un=v=>(v||"").replace(/\\n/gi,"\n").replace(/\\([,;\\])/g,"$1");
+  const dt=x=>{if(!x)return null;const m=/(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?/.exec(x.val);if(!m)return null;
+    if(!m[4])return {d:`${m[1]}-${m[2]}-${m[3]}`,t:""};
+    const d=m[7]?new Date(Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5])):new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5]);
+    return {d:ISO(d),t:String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}};
+  const a=dt(ev.DTSTART),e=dt(ev.DTEND),org=ev.ORGANIZER?(/CN=("?)([^;:"]+)\1/i.exec(ev.ORGANIZER.key)||[])[2]||ev.ORGANIZER.val.replace(/^mailto:/i,""):"";
+  const mail=ev.ORGANIZER?ev.ORGANIZER.val.replace(/^mailto:/i,""):"";
+  const titel=un(ev.SUMMARY&&ev.SUMMARY.val),ort=un(ev.LOCATION&&ev.LOCATION.val),desc=un(ev.DESCRIPTION&&ev.DESCRIPTION.val).trim(),full=[titel,ort,desc].join("\n");
+  return {titel,datum:a?a.d:"",zeit:a?a.t:"",bis:e&&e.d===(a&&a.d)?e.t:"",ort,firma:org,kontakt:mail&&mail!==org?mail:"",notiz:desc.slice(0,3000),art:guessArt(full),lieg:guessLieg(full),quelle:"Kalendereinladung",raw:String(raw).slice(0,20000)};
+}
+function parseTerminMail(raw){
+  const p=parseMail(raw),txt=p.titel+"\n"+p.text,[zeit,bis]=findTimes(txt);
+  const firma=(p.gemeldet||"").replace(/\s*\(.*\)$/,""),kontakt=(/\(([^)]+@[^)]+)\)/.exec(p.gemeldet||"")||[])[1]||"";
+  const tp=(/treffpunkt(?:\s+ist)?(?:\s+(?:der|die|das|am|an der|vor dem|vor der))?\s*:?\s*([^.\n!]{2,60})/i.exec(txt)||[])[1];
+  return {titel:p.titel,datum:findDate(txt),zeit,bis,ort:tp?tp.trim():p.ort,firma,kontakt,notiz:p.text,art:guessArt(txt),lieg:p.lieg,quelle:"E-Mail",raw:p.raw};
+}
+let termImp=null;
+function openTermImp(){termImp={raw:"",p:null,f:null,msg:""};$("#imp").hidden=false;renderTermImp();setTimeout(()=>{const t=$("#tiRaw");if(t)t.focus()},30)}
+function renderTermImp(){
+  const st=termImp,p=st.p,f=st.f;let body;
+  if(!p){body=`<div class="fld"><label for="tiRaw">E-Mail oder Einladung hier einfügen</label><textarea id="tiRaw" class="miraw" placeholder="Von: Elektro Beispiel GmbH &lt;info@…&gt;&#10;Betreff: Einweisung Kita Senfkorn&#10;&#10;wir kommen am 20.11. um 9:30 Uhr zur Einweisung …">${esc(st.raw)}</textarea></div>
+    <div class="actions"><label class="btn" for="tiFile">Kalendereinladung (.ics) öffnen</label><input type="file" id="tiFile" accept=".ics,text/calendar" hidden></div>
+    <div class="lock" style="display:block">Outlook-Einladungen: Anhang „.ics“ speichern und hier öffnen. Normale Mails mit Datum und Uhrzeit im Text einfach komplett kopieren und einfügen.</div>
+    ${st.msg?`<div class="msg err">${esc(st.msg)}</div>`:""}`}
+  else{const L=p.lieg;
+    body=`<div class="mi-found">
+      ${f.datum?`<span class="stp st-ok">Datum erkannt</span>`:`<span class="stp st-wartet">Kein Datum gefunden</span><span class="note">bitte eintragen</span>`}
+      ${L.id?`<span class="stp st-ok">Liegenschaft erkannt</span><span class="note">anhand ${esc(L.why.join(", "))}</span>`:`<span class="stp st-wartet">Liegenschaft offen</span>${L.cands.slice(0,3).map(c=>`<button class="btn sm" type="button" data-ti="pick" data-id="${c.id}">${esc(liegShort(c.id))}</button>`).join("")}`}
+      <span class="stp st-offen">${esc(p.quelle)}</span></div>
+    <div class="form plain">
+      <div class="fld wide"><label for="ti-titel">Termin</label><input id="ti-titel" data-tf="titel" value="${esc(f.titel)}"></div>
+      <div class="fld"><label for="ti-datum">Datum</label><input type="date" id="ti-datum" data-tf="datum" value="${esc(f.datum)}"></div>
+      <div class="fld"><label for="ti-zeit">Von</label><input type="time" id="ti-zeit" data-tf="zeit" value="${esc(f.zeit)}"></div>
+      <div class="fld"><label for="ti-bis">Bis</label><input type="time" id="ti-bis" data-tf="bis" value="${esc(f.bis)}"></div>
+      <div class="fld"><label for="ti-art">Art</label><select id="ti-art" data-tf="art">${T_ARTEN.map(x=>`<option${f.art===x?" selected":""}>${x}</option>`).join("")}</select></div>
+      <div class="fld"><label for="ti-lieg">Liegenschaft</label><select id="ti-lieg" data-tf="lieg"><option value="">– keine –</option>${sorted().map(([k,o])=>`<option value="${k}"${f.lieg===k?" selected":""}>${esc((o.nr?o.nr+" ":"")+(o.name||""))}</option>`).join("")}</select></div>
+      <div class="fld"><label for="ti-ort">Treffpunkt</label><input id="ti-ort" data-tf="ort" value="${esc(f.ort)}"></div>
+      <div class="fld"><label for="ti-firma">Firma / Ansprechpartner</label><input id="ti-firma" data-tf="firma" value="${esc(f.firma)}"></div>
+      <div class="fld"><label for="ti-kontakt">Kontakt</label><input id="ti-kontakt" data-tf="kontakt" value="${esc(f.kontakt)}"></div>
+      <div class="fld wide"><label for="ti-notiz">Notiz</label><textarea id="ti-notiz" data-tf="notiz">${esc(f.notiz)}</textarea></div>
+    </div>
+    <details class="origmail"><summary>Original anzeigen</summary><pre>${esc(p.raw)}</pre></details>`}
+  $("#imp").innerHTML=`<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="tiT" style="max-width:820px">
+    <div class="dlg-h"><div><h2 id="tiT">Termin aus E-Mail oder Einladung</h2><p>${p?"Angaben prüfen und Termin anlegen.":"Die App erkennt Datum, Uhrzeit, Firma, Art und Liegenschaft."}</p></div>
+      <button class="x" type="button" data-ti="close" aria-label="Schließen">×</button></div>
+    <div class="dlg-b">${body}</div>
+    <div class="dlg-f">${p?`<button class="btn ghost" type="button" data-ti="reset">Andere Vorlage</button>`:`<span></span>`}
+      <div class="actions"><button class="btn" type="button" data-ti="close">Abbrechen</button>${p?`<button class="btn pri" type="button" data-ti="go"${f.titel.trim()&&f.datum?"":" disabled"}>Termin anlegen</button>`:`<button class="btn pri" type="button" data-ti="parse"${st.raw.trim()?"":" disabled"}>Erkennen</button>`}</div></div></div>`;
+  const fi=$("#tiFile");if(fi)fi.addEventListener("change",async()=>{const file=fi.files[0];if(!file)return;try{termImp.raw=await file.text();termParse()}catch(e){termImp.msg="Die Datei ließ sich nicht lesen.";renderTermImp()}});
+}
+function termParse(){const st=termImp;if(!st.raw.trim())return;
+  st.p=/BEGIN:VCALENDAR/i.test(st.raw)?parseICS(st.raw):parseTerminMail(st.raw);
+  if(st.p.quelle==="Kalendereinladung"&&!st.p.datum){st.p=null;st.msg="In der Einladung wurde kein Termin gefunden.";return renderTermImp()}
+  st.f={titel:st.p.titel||"",datum:st.p.datum,zeit:st.p.zeit,bis:st.p.bis,art:st.p.art,lieg:st.p.lieg.id,ort:st.p.ort||"",firma:st.p.firma||"",kontakt:st.p.kontakt||"",notiz:st.p.notiz||""};renderTermImp()}
+function termReady(){const g=document.querySelector('[data-ti="go"]');if(g&&termImp.f)g.disabled=!(termImp.f.titel.trim()&&termImp.f.datum)}
+function termClick(e){const b=e.target.closest("[data-ti]");if(!b)return;const a=b.dataset.ti,st=termImp;
+  if(a==="close")return closeImport();
+  if(a==="parse")return termParse();
+  if(a==="reset"){termImp={raw:"",p:null,f:null,msg:""};return renderTermImp()}
+  if(a==="pick"){st.f.lieg=b.dataset.id;st.p.lieg={id:b.dataset.id,why:["Auswahl"],cands:st.p.lieg.cands};return renderTermImp()}
+  if(a==="go"){const f=st.f;if(!f.titel.trim()||!f.datum)return;const id=newRecId("taetig");
+    const r=Object.assign(MODS.taetig.defaults(),f,{titel:f.titel.trim(),von:`${st.p.quelle}${f.firma?": "+f.firma:""}`,quelle:st.p.quelle,mail:st.p.raw});
+    C.taetig.map.set(id,r);cTouch("taetig",id);histOpen["rec:taetig:"+id]={id:histAdd(Object.assign({act:"angelegt",fields:[],note:"aus "+st.p.quelle},recInfo("taetig",id,r))),at:Date.now()};
+    termImp=null;$("#imp").hidden=true;$("#imp").innerHTML="";renderNav();openRec("taetig",id);setSave("ok","Termin angelegt")}
+}
+function termInput(e){const t=e.target,st=termImp;
+  if(t.id==="tiRaw"){st.raw=t.value;const b=document.querySelector('[data-ti="parse"]');if(b)b.disabled=!st.raw.trim();return}
+  if(t.dataset.tf&&st.f){st.f[t.dataset.tf]=t.value;termReady()}}
+function icsFor(r){
+  const d=(r.datum||"").replace(/-/g,""),esc2=v=>String(v||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/([,;])/g,"\\$1"),stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"");
+  const tm=x=>x?x.replace(":","")+"00":"";const o=objs.get(r.lieg);
+  let start,end;if(r.zeit){start=`DTSTART:${d}T${tm(r.zeit)}`;let e=r.bis;if(!e){const [h,mi]=r.zeit.split(":").map(Number);const x=new Date(2000,0,1,h+1,mi);e=String(x.getHours()).padStart(2,"0")+":"+String(x.getMinutes()).padStart(2,"0")}end=`DTEND:${d}T${tm(e)}`}
+  else{const n=new Date(+d.slice(0,4),+d.slice(4,6)-1,+d.slice(6,8)+1);start=`DTSTART;VALUE=DATE:${d}`;end=`DTEND;VALUE=DATE:${ISO(n).replace(/-/g,"")}`}
+  const loc=[r.ort,o&&o.name,o&&o.adresse].filter(Boolean).join(", ");
+  const desc=[r.art,r.firma?"Firma / Ansprechpartner: "+r.firma:"",r.kontakt?"Kontakt: "+r.kontakt:"",r.notiz].filter(Boolean).join("\n");
+  return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//CAFM//Termine//DE","BEGIN:VEVENT",`UID:${(r.uid||rid())}@cafm`,`DTSTAMP:${stamp}`,start,end,`SUMMARY:${esc2(r.titel||"Termin")}`,loc?`LOCATION:${esc2(loc)}`:"",desc?`DESCRIPTION:${esc2(desc)}`:"","END:VEVENT","END:VCALENDAR"].filter(Boolean).join("\r\n");
+}
 
 /* ---------- Begehung: Auftrag aus Mangel ---------- */
 function mangelTicket(sec,rowId){
@@ -1942,28 +2485,131 @@ async function keyDoc(k,a){const sig=await sigSrc(a.sig);
    <div class="sig"><div>${fmtDate(a.datum)}<div class="line">Datum</div></div><div>${sig?`<img src="${sig}" alt="">`:""}<div class="line">Unterschrift Empfänger (${esc(a.an)})</div></div></div>`)}
 function printHTML(html){const f=document.createElement("iframe");f.style.cssText="position:fixed;width:0;height:0;border:0;right:0;bottom:0";document.body.appendChild(f);f.srcdoc=html;f.onload=()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(e){}setTimeout(()=>f.remove(),60000)}}
 
+/* ---------- PDF für Datensätze, Listen und Berichte ---------- */
+const stand=()=>`Stand ${new Date().toLocaleDateString("de-DE")}`;
+function fieldVal(f,r){const v=r[f.k];if(v==null||v==="")return "–";
+  if(f.t==="date")return fmtDate(v);if(f.t==="lieg")return liegName(v)||"–";
+  if(f.t==="anlage"){const a=C.anlagen.map.get(v);return a?((a.inv?a.inv+" ":"")+(a.bez||"")):"–"}
+  if(f.t==="status")return A_STATUS[v]?.[0]||v;if(f.ol)return f.ol[v]||v;if(f.k==="kosten")return v+" €";return String(v)}
+async function fotoSrcs(fs){const out=[];for(const f of fs||[]){const u=await IMG.url(f.id);if(u)out.push(u)}return out}
+async function recModel(m,id,r){
+  const M=MODS[m],short=M.fields.filter(f=>f.t!=="area"&&f.k!=="titel"&&f.k!=="bez"),blocks=[{h:"Angaben"},{kv2:short.map(f=>[f.l,fieldVal(f,r)])}];
+  M.fields.filter(f=>f.t==="area"&&r[f.k]).forEach(f=>blocks.push({h:f.l},{p:r[f.k]}));
+  if(m==="auftraege"){
+    if(r.abschluss){const a=r.abschluss;blocks.push({h:"Erledigung"},{kv2:[["Erledigt am",fmtDate(a.datum)],["Abgezeichnet von",a.name||"–"],["Zeitpunkt",new Date(a.at).toLocaleString("de-DE")],["Status",A_STATUS[r.status]?.[0]||""]]});
+      if(a.bericht)blocks.push({p:a.bericht});blocks.push({sig:{date:fmtDate(a.datum),img:await sigSrc(a.sig),label:`Unterschrift ${a.name||""}`}})}
+    if((r.log||[]).length)blocks.push({h:"Verlauf"},{table:{head:["Zeitpunkt","Eintrag"],w:[.24,.76],sz:8.2,rows:r.log.map(x=>[new Date(x.at).toLocaleString("de-DE"),x.t])}});
+  }
+  if(m==="wartung"){const n=planNext(r),ot=openTicketFor("planId",id);
+    blocks.splice(2,0,{kv2:[["Nächste Fälligkeit",n?{t:fmtDate(n),c:daysUntil(n)<0?"over":"bold"}:{t:"Termin fehlt",c:"over"}],["Offener Auftrag",ot?ot[1].nr:"keiner"]]});
+    const h=(r.hist||[]).slice().sort((a,b)=>a.datum<b.datum?1:-1);
+    blocks.push({h:"Durchführungen"},h.length?{table:{head:["Datum","Durch","Ergebnis / Bemerkung","Auftrag"],w:[.14,.28,.43,.15],rows:h.map(x=>[fmtDate(x.datum),x.von||"",x.bem||"",x.auftrag||""])}}:{p:"Noch keine eingetragen."})}
+  if(m==="anlagen"){const pl=recs("wartung").filter(([,p])=>p.anlage===id),tk=tickets().filter(([,t])=>t.anlage===id).sort((a,b)=>String(b[1].nr).localeCompare(String(a[1].nr)));
+    blocks.push({h:"Wartung & Prüfungen"},pl.length?{table:{head:["Bezeichnung","Intervall","Zuletzt","Nächste"],w:[.46,.18,.18,.18],rows:pl.map(([,p])=>[p.bez||"",MODS.wartung.fields[4].ol[p.intervall||""]||"",fmtDate(p.letzte)||"–",planNext(p)?fmtDate(planNext(p)):"–"])}}:{p:"Keine."});
+    blocks.push({h:"Aufträge"},tk.length?{table:{head:["Nr.","Auftrag","Status","Erledigt"],w:[.15,.5,.17,.18],rows:tk.map(([,t])=>[t.nr,t.titel||"",A_STATUS[t.status]?.[0]||"",fmtDate(t.abschluss?.datum)||"–"])}}:{p:"Keine."})}
+  if(m==="schluessel"){const au=(r.ausgaben||[]).slice().sort((a,b)=>a.datum<b.datum?1:-1);
+    blocks.push({h:`Ausgaben · ${num(r.anzahl)-keyOut(r)} von ${num(r.anzahl)} verfügbar`},au.length?{table:{head:["Empfänger","Funktion / Firma","Anz.","Ausgabe","Rückgabe bis","Zurück am"],w:[.22,.22,.08,.15,.17,.16],
+      rows:au.map(a=>[a.an,a.firma||"",String(a.anz||1),fmtDate(a.datum),!a.zur&&a.bis&&daysUntil(a.bis)<0?{t:fmtDate(a.bis),c:"over"}:(fmtDate(a.bis)||"–"),a.zur?fmtDate(a.zur.datum):"offen"])}}:{p:"Noch nicht ausgegeben."})}
+  if(M.photos&&(r.fotos||[]).length)blocks.push({h:"Fotos"},{imgs:await fotoSrcs(r.fotos)});
+  if(m==="auftraege"&&r.mail)blocks.push({h:"Original-E-Mail"},{note:r.mail.slice(0,4000)});
+  return {title:`${M.single}${r.nr||r.inv?" "+(r.nr||r.inv):""}`,sub:M.title(r)||"",right:[stand(),liegName(r.lieg)||""].filter(Boolean),blocks};
+}
+async function keyModel(k,a){return {title:"Schlüsselquittung",sub:`${k.nr||""} ${k.bez||""}`.trim(),right:[stand()],blocks:[
+  {h:"Schlüssel"},{kv2:[["Schlüssel-Nr.",k.nr||"–"],["Bezeichnung",k.bez||"–"],["Schließung",k.schliess||"–"],["Liegenschaft",liegName(k.lieg)||"–"],["Adresse",objs.get(k.lieg)?.adresse||"–"]]},
+  {h:"Ausgabe"},{kv2:[["Empfänger",a.an],["Funktion / Firma",a.firma||"–"],["Anzahl",String(a.anz||1)],["Ausgegeben am",fmtDate(a.datum)],["Rückgabe bis",fmtDate(a.bis)||"unbefristet"],["Zurückgegeben am",a.zur?fmtDate(a.zur.datum):"–"]]},
+  {p:"Der Empfänger bestätigt den Erhalt der oben genannten Schlüssel. Er verpflichtet sich, die Schlüssel sorgfältig aufzubewahren, nicht an Dritte weiterzugeben und einen Verlust unverzüglich zu melden."},
+  {sig:{date:fmtDate(a.datum),img:await sigSrc(a.sig),label:`Unterschrift Empfänger (${a.an})`}}]}}
+const PDF_COLS={auftraege:[["Nr.",.1],["Titel",.23],["Liegenschaft",.17],["Gewerk",.1],["Priorität",.08],["Status",.08],["Zuständig",.12],["Frist",.12]],
+  wartung:[["Bezeichnung",.27],["Liegenschaft",.19],["Intervall (Monate)",.12],["Zuletzt",.12],["Nächste",.13],["Dienstleister",.17]],
+  anlagen:[["Inv.-Nr.",.1],["Bezeichnung",.26],["Kategorie",.14],["Liegenschaft",.2],["Standort",.18],["Status",.12]],
+  schluessel:[["Nr.",.08],["Bezeichnung",.27],["Liegenschaft",.22],["Exemplare",.1],["Ausgegeben",.11],["Aufbewahrung",.22]],
+  taetig:[["Datum",.12],["Zeit",.11],["Termin",.27],["Liegenschaft",.2],["Firma / Ansprechpartner",.18],["Status",.12]]};
+function listModel(m,rows){
+  const M=MODS[m],spec=PDF_COLS[m],cols=spec.map(([l])=>M.csv.find(c=>c[0]===l)),st=MS[m];
+  const val=(c,r)=>{const v=typeof c[1]==="function"?c[1](r):r[c[1]];return v==null?"":String(v)};
+  const trs=rows.map(r=>({cells:cols.map(c=>{let v=val(c,r);
+    if(m==="auftraege"&&c[0]==="Frist"&&OPEN_ST.includes(r.status)&&r.frist&&daysUntil(r.frist)<0)return {t:v,c:"over"};
+    if(m==="wartung"&&c[0]==="Nächste"){const n=planNext(r);if(!n||daysUntil(n)<0)return {t:v||"Termin fehlt",c:"over"}}
+    if(m==="wartung"&&c[0]==="Intervall (Monate)")return MODS.wartung.fields[4].ol[r.intervall||""]||"";
+    return v})}));
+
+  const filt=[st.lieg?"Liegenschaft: "+liegName(st.lieg):"",M.filter?(M.filter.opts.find(o=>o[0]===st.f)||[])[1]||"":"",M.month&&st.month?new Date(st.month+"-01").toLocaleDateString("de-DE",{month:"long",year:"numeric"}):"",st.q?"Suche: "+st.q:""].filter(Boolean).join(" · ");
+  return {title:M.label,sub:filt||"Alle Einträge",right:[stand(),`${rows.length} Einträge`],
+    blocks:[rows.length?{table:{head:spec.map(([l])=>l==="Intervall (Monate)"?"Intervall":l),w:spec.map(x=>x[1]),sz:8.2,rows:trs}}:{p:"Keine Einträge für diese Auswahl."}]};
+}
+function liegReportModel(lid){
+  const o=objs.get(lid),st=stats(o),blocks=[];
+  const t=(head,w,rows,empty)=>rows.length?{table:{head,w,rows,sz:8.3}}:{p:empty||"keine"};
+  blocks.push({h:"Stammdaten"},{kv2:[["Adresse",o.adresse||"–"],["Nutzung",o.nutzung||"–"],["Baujahr",o.baujahr||"–"],["Letzte Begehung",fmtDate(o.datum)||"–"],["Status Begehung",(STATUS[o.status]||STATUS.offen)[0]],["Begangen von",o.bearbeiter||"–"]]});
+  blocks.push({h:"Kennzahlen"},{kv2:[["Unterverteilungen",String(st.uv)],["Sicherungen / FI",`${st.sich} / ${st.fi}`],["Leuchten",String(st.leuchten)],["Ortsveränderliche Geräte",String(st.omg)],["Brandschutztüren",String(st.tueren)],["Leitern & Tritte",`${st.lad}${st.ladDue?` (${st.ladDue} offen)`:""}`],["Mängel Zustand 3–4",{t:String(st.maengel),c:st.maengel?"over":""}]]});
+  const mg=[];SECTIONS.filter(hasZ).forEach(s=>(o.rows[s.key]||[]).forEach(r=>{if(+r.zustand>=3)mg.push([s.label,r[s.cols[0].k]||"",r.bem||r.text||"",{t:String(r.zustand),c:"over"}])}));
+  blocks.push({h:"Mängel aus der Begehung"},t(["Bereich","Element","Bemerkung","Zust."],[.22,.22,.46,.1],mg));
+  const tk=tickets().filter(([,x])=>x.lieg===lid&&OPEN_ST.includes(x.status)).map(([,x])=>[x.nr,x.titel||"",x.zust||"",x.frist&&daysUntil(x.frist)<0?{t:fmtDate(x.frist),c:"over"}:fmtDate(x.frist)||"–",A_STATUS[x.status]?.[0]||""]);
+  blocks.push({h:"Offene Aufträge"},t(["Nr.","Auftrag","Zuständig","Frist","Status"],[.13,.4,.2,.13,.14],tk));
+  const pl=recs("wartung").filter(([,p])=>p.lieg===lid).map(([,p])=>p).sort(MODS.wartung.sort).map(p=>{const n=planNext(p);return [p.bez||"",MODS.wartung.fields[4].ol[p.intervall||""]||"",fmtDate(p.letzte)||"–",!n||daysUntil(n)<0?{t:n?fmtDate(n):"Termin fehlt",c:"over"}:fmtDate(n),p.dienst||""]});
+  blocks.push({h:"Wartung & Prüfungen"},t(["Prüfung","Intervall","Zuletzt","Nächste","Dienstleister"],[.34,.16,.13,.14,.23],pl));
+  const ld=[];["leiter","tritt"].forEach(s=>(o.rows[s]||[]).forEach(r=>{const x=ladStatus(r);ld.push([s==="leiter"?"Leiter":"Tritt",r.inv||"",r.art||"",r.ort||"",["missing","over","locked"].includes(x.state)?{t:x.txt,c:"over"}:x.txt])}));
+  blocks.push({h:"Leitern & Tritte"},t(["Art","Inv.-Nr.","Typ","Standort","Prüfstatus"],[.12,.12,.22,.26,.28],ld));
+  const an=recs("anlagen").filter(([,a])=>a.lieg===lid).map(([,a])=>[a.inv||"",a.bez||"",a.kat||"",a.ort||"",a.status||""]);
+  blocks.push({h:"Anlagen & Geräte"},t(["Inv.-Nr.","Bezeichnung","Kategorie","Standort","Status"],[.12,.32,.18,.22,.16],an));
+  const ks=recs("schluessel").filter(([,k])=>k.lieg===lid).map(([,k])=>[k.nr||"",k.bez||"",String(num(k.anzahl)),keyOpen(k).map(a=>a.an).join(", ")||"–"]);
+  blocks.push({h:"Schlüssel"},t(["Nr.","Bezeichnung","Bestand","Ausgegeben an"],[.1,.38,.12,.4],ks));
+  const dl=(o.docs||[]).map(d=>["Liegenschaft","",d.name,d.pages?String(d.pages):"–",new Date(d.t).toLocaleDateString("de-DE")]);
+  SECTIONS.forEach(s=>(o.rows[s.key]||[]).forEach(r=>(r.docs||[]).forEach(d=>dl.push([s.label,r[s.cols[0].k]||"",d.name,d.pages?String(d.pages):"–",new Date(d.t).toLocaleDateString("de-DE")]))));
+  if(dl.length)blocks.push({h:"Unterlagen"},t(["Bereich","Eintrag","Dokument","Seiten","Datum"],[.2,.2,.36,.1,.14],dl));
+  if(o.notiz)blocks.push({h:"Notizen"},{p:o.notiz});
+  return {title:"Liegenschaftsbericht",sub:liegName(lid),right:[stand()],blocks};
+}
+function allReportModel(){
+  const rows=sorted().map(([id,o])=>{const st=stats(o),tk=tickets().filter(([,t])=>t.lieg===id&&OPEN_ST.includes(t.status)).length,
+    due=recs("wartung").filter(([,p])=>p.lieg===id&&(()=>{const n=planNext(p);return !n||daysUntil(n)<=30})()).length;
+    return [liegName(id),(STATUS[o.status]||STATUS.offen)[0],String(tk),due?{t:String(due),c:"over"}:"0",st.maengel?{t:String(st.maengel),c:"over"}:"0",st.ladDue?{t:String(st.ladDue),c:"over"}:"0"]});
+  const over=agendaItems().filter(x=>daysUntil(x.d)<0).map(x=>[{t:fmtDate(x.d),c:"over"},x.type,x.label,liegName(x.lieg)]);
+  return {title:"Gesamtübersicht Liegenschaften",sub:`${objs.size} Liegenschaften`,right:[stand()],blocks:[
+    {table:{head:["Liegenschaft","Begehung","Aufträge offen","Prüfungen fällig*","Mängel","Leitern offen"],w:[.38,.13,.12,.14,.1,.13],align:["l","l","r","r","r","r"],sz:8.2,rows}},
+    {note:"* überfällig, in den nächsten 30 Tagen fällig oder ohne Termin"},
+    {h:"Überfällig"},over.length?{table:{head:["Fällig seit","Art","Was","Liegenschaft"],w:[.13,.12,.4,.35],sz:8.2,rows:over}}:{p:"Nichts überfällig."}]};
+}
+function termReportModel(month){
+  const list=recs("taetig").map(([,r])=>r).filter(r=>!month||(r.datum||"").startsWith(month)).sort((a,b)=>tKey(a).localeCompare(tKey(b)));
+  const ml=month?new Date(month+"-01").toLocaleDateString("de-DE",{month:"long",year:"numeric"}):"gesamt";
+  return {title:"Terminübersicht",sub:ml,right:[stand(),`${list.length} Termine`],blocks:[list.length?{table:{head:["Datum","Zeit","Termin","Liegenschaft","Firma / Ansprechpartner","Status"],w:[.13,.11,.27,.2,.17,.12],sz:8.2,
+    rows:list.map(r=>({cells:[dayLabel(r.datum),tZeit(r),[MODS.taetig.title(r),r.art,r.ort?"Treffpunkt: "+r.ort:""].filter(Boolean).join("\n"),liegShort(r.lieg)||"–",[r.firma,r.kontakt].filter(Boolean).join("\n")||"–",(T_ST[r.status]||T_ST.geplant)[0]]}))}}:{p:"Keine Termine in diesem Zeitraum."}]};
+}
+function taetigReportModel(month){
+  const list=recs("taetig").map(([,r])=>r).filter(r=>!month||(r.datum||"").startsWith(month)).sort((a,b)=>(a.datum||"").localeCompare(b.datum||""));
+  const h=list.reduce((a,r)=>a+num(r.dauer),0),k=list.reduce((a,r)=>a+num(r.km),0),byL={};
+  list.forEach(r=>{const n=liegName(r.lieg)||"ohne Liegenschaft";byL[n]=(byL[n]||0)+num(r.dauer)});
+  const ml=month?new Date(month+"-01").toLocaleDateString("de-DE",{month:"long",year:"numeric"}):"gesamt";
+  return {title:"Tätigkeitsnachweis",sub:ml,right:[stand()],blocks:[
+    {kv2:[["Zeitraum",ml],["Einträge",String(list.length)],["Stunden",h.toLocaleString("de-DE")],["Kilometer",k.toLocaleString("de-DE")]]},
+    {h:"Stunden je Liegenschaft"},{table:{head:["Liegenschaft","Stunden"],w:[.8,.2],align:["l","r"],rows:Object.entries(byL).sort((a,b)=>b[1]-a[1]).map(([n,v])=>[n,v.toLocaleString("de-DE")])}},
+    {h:"Einzelnachweis"},list.length?{table:{head:["Datum","Liegenschaft","Art","Beschreibung","Std.","km"],w:[.11,.2,.13,.38,.09,.09],align:["l","l","l","l","r","r"],sz:8.2,
+      rows:list.map(r=>[fmtDate(r.datum),liegShort(r.lieg),r.kat||"",r.text||"",r.dauer?num(r.dauer).toLocaleString("de-DE"):"",r.km?num(r.km).toLocaleString("de-DE"):""])}}:{p:"Keine Einträge."},
+    {sig:{date:"",img:"",label:"Unterschrift"}}]};
+}
+
 /* ---------- Berichte ---------- */
 const repState={lieg:"",month:today().slice(0,7)};
 function reportsHTML(){
   const card=(t,d,ctl,btns)=>`<div class="modcard rep"><h2>${t}</h2><p class="note">${d}</p>${ctl||""}<div class="actions">${btns}</div></div>`;
-  const out=k=>`<button class="btn pri" type="button" data-mact="rep" data-r="${k}" data-k="save">Speichern</button>${PRINT_OK?`<button class="btn" type="button" data-mact="rep" data-r="${k}" data-k="print">Drucken</button>`:""}`;
-  return `<section><div class="mhead"><div><h1>Berichte</h1><p class="note">Berichte werden als A4-Dokument gespeichert und lassen sich im Browser drucken oder als PDF sichern. Listen gehen als CSV direkt nach Excel.</p></div></div>
+  const out=k=>`<button class="btn pri" type="button" data-mact="rep" data-r="${k}" data-k="save">PDF</button>${PRINT_OK?`<button class="btn" type="button" data-mact="rep" data-r="${k}" data-k="print">Drucken</button>`:""}`;
+  return `<section><div class="mhead"><div><h1>Berichte</h1><p class="note">Berichte werden als PDF erstellt. Listen gehen als CSV direkt nach Excel. Jede Liste und jeder einzelne Eintrag lässt sich außerdem direkt dort als PDF ausgeben.</p></div></div>
    <div class="repgrid">
     ${card("Liegenschaftsbericht","Stammdaten, Mängel aus der Begehung, offene Aufträge, Prüftermine, Leitern und Tritte, Anlagen und Schlüssel einer Liegenschaft.",`<div class="fld">${liegSelect("repLieg",repState.lieg,"Liegenschaft wählen").replace('<select id="repLieg"','<select id="repLieg" data-rep="lieg"')}</div>`,out("lieg"))}
     ${card("Gesamtübersicht","Alle Liegenschaften mit offenen Aufträgen, fälligen Prüfungen und Mängeln, dazu alle überfälligen Punkte.","",out("all"))}
-    ${card("Tätigkeitsnachweis","Tätigkeiten eines Monats mit Stunden und Kilometern, gruppiert nach Liegenschaft.",`<div class="fld"><select id="repMonth" data-rep="month">${monthOpts(repState.month)}</select></div>`,out("taetig"))}
+    ${card("Terminübersicht","Alle Termine eines Monats, nach Tag sortiert, mit Firma, Liegenschaft und Status.",`<div class="fld"><select id="repMonth" data-rep="month">${monthOpts(repState.month)}</select></div>`,out("taetig"))}
     ${card("Listen als CSV","Für die Weiterverarbeitung in Excel.","",`${Object.entries(MODS).map(([k,M])=>`<button class="btn" type="button" data-mact="rep" data-r="csv-${k}" data-k="csv">${M.label}</button>`).join("")}`)}
    </div></section>`;
 }
 async function runReport(r,k){
   if(r.startsWith("csv-")){const m=r.slice(4);return exportModCSV(m,recs(m).map(([id,x])=>Object.assign({_id:id},x)).sort(MODS[m].sort))}
-  let html;
-  if(r==="lieg"){if(!repState.lieg){setSave("err","Bitte zuerst eine Liegenschaft wählen");return}html=liegReport(repState.lieg)}
-  else if(r==="all")html=allReport();
-  else if(r==="taetig")html=taetigReport(repState.month);
-  if(k==="print")return printHTML(html);
-  const name=r==="lieg"?`Liegenschaftsbericht ${liegName(repState.lieg)}`:r==="all"?`Gesamtübersicht ${today()}`:`Tätigkeitsnachweis ${repState.month||"gesamt"}`;
-  try{await saveFile(name.replace(/[\\/:*?"<>|]/g,"-")+".html",html,"text/html")}catch(e){}
+  let model;
+  if(r==="lieg"){if(!repState.lieg){setSave("err","Bitte zuerst eine Liegenschaft wählen");return}model=liegReportModel(repState.lieg)}
+  else if(r==="all")model=allReportModel();
+  else if(r==="taetig")model=termReportModel(repState.month);
+  const name=r==="lieg"?`Liegenschaftsbericht ${liegName(repState.lieg)}`:r==="all"?`Gesamtübersicht ${today()}`:`Terminübersicht ${repState.month||"gesamt"}`;
+  return outDoc([model],name,k==="print"?"print":"pdf");
 }
 function liegReport(lid){
   const o=objs.get(lid),st=stats(o);
